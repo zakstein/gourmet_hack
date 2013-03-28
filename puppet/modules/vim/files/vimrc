@@ -1,0 +1,126 @@
+""""" GENERAL
+set nocompatible               " We're running Vim, not Vi!
+syntax on                      " Enable syntax highlighting
+filetype on                    " Enable filetype detection
+filetype indent on             " Enable filetype-specific indenting
+filetype plugin on             " Enable filetype-specific plugins
+set shell=/bin/bash\ -i
+"set mouse=a
+set viminfo='10,\"100,:20,%,n~/.viminfo  " Save practically everything session to session.
+au BufReadPost * if line("'\"") > 0|if line("'\"") <= line("$")|exe("norm '\"")|exe "norm zz"|else|exe "norm $"|exe "zz"|endif|endif
+set history=1000               " How many lines of history to remember.
+set ruler                      " Always show current positions along the bottom.
+set nohlsearch                 " Do not highlight search terms.
+set showmatch                  " When a bracket is inserted, briefly jump to the matching one.
+set hid                        " Allow switching between buffers w/o saving.
+set lz                         " Do not redraw while running macros.
+set backspace=2                " Make backspace work normal.
+set incsearch                  " Search as you type.
+set number                     " Turn on line numbers.
+"set iskeyword-=_              " Allow _ as word separator.
+"set smartcase                 " Ignore case of search if pattern is lowercase.
+set wildmode=longest,list      " Tab completion with list instead of cycling.
+"let loaded_matchparen = 1      " In case I get sick of it.
+noremap <C-J> <C-W>j           " Easy window switching
+noremap <C-K> <C-W>k           " Easy window switching
+noremap <C-H> <C-W>h           " Easy window switching
+noremap <C-L> <C-W>l           " Easy window switching
+map <Leader>ww :b#<CR>:bd#<CR> " Close buffer w/o closing a window.
+map ,t <Plug>TaskList
+setlocal omnifunc=syntaxcomplete#Complete " Autocomplete for everything.
+au FileType python set omnifunc=pythoncomplete#Complete " python specific autocomplete
+set cot+=menuone               " Autocompleting a single match still shows func prototype.
+colorscheme elflord
+
+" For baby vimmers.
+"map <left> iDONOTUSEARROWKEYS
+"map <right> iDONOTUSEARROWKEYS
+"map <up> iDONOTUSEARROWKEYS
+"map <down> iDONOTUSEARROWKEYS
+
+"imap <left> DONOTUSEARROWKEYS
+"imap <right> DONOTUSEARROWKEYS
+"imap <up> DONOTUSEARROWKEYS
+"imap <down> DONOTUSEARROWKEYS
+
+""""" TABS
+set tabstop=4               " Tabs only.
+set shiftwidth=4            " Tabs are four spaces each.
+function! BenIndent()       " Function for tabbing whole file
+	let oldLine=line('.') 
+	normal(gg=G) 
+	execute ':' . oldLine 
+endf 
+map -- :call BenIndent()<cr>
+
+
+""""" MINIBUFEXPL
+let g:miniBufExplMapWindowNavVim = 1
+let g:miniBufExplMapWindowNavArrows = 1
+" F c-tab, I want real tabs!
+noremap <TAB>   :MBEbn<CR>:<BS>
+noremap <S-TAB> :MBEbp<CR>:<BS>
+let g:miniBufExplModSelTarget = 1 
+          
+""""" SYNTASTIC
+let g:syntastic_enable_signs=1
+let g:syntastic_auto_loc_list=1
+
+""""" NERDTREE
+autocmd vimenter * NERDTree
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+
+"""" PEP8
+let g:pep8_map = '<leader>8'
+
+""""" FOLDING
+set foldenable
+set foldmethod=indent
+set foldlevel=100
+
+""""" SEARCHING
+" Finds in files recursively in current directory, except folder .git, logs, cmpl and translations. Don't search 'tags' file or currently open swap files.
+set grepprg=find\ .\ \\(\ -name\ .git\ -o\ -name\ logs\ -o\ -name\ cmpl\ -o\ -name\ translations\ \\)\ -prune\ -o\ -print0\ \\\|\ xargs\ -r0\ grep\ -n\ --exclude='.*\.swp'\ --exclude='./tags'\ $*\ /dev/null
+
+"""" VAM
+fun! SetupVAM()
+	" YES, you can customize this vam_install_path path and
+	" everything still works!
+	let vam_install_path = expand('$HOME') .  '/.vim/vim-addons'
+	exec 'set runtimepath+='.vam_install_path.'/vim-addon-manager'
+
+	" * unix based os users may want to use this code checking out VAM
+	" * windows users want to use http://mawercer.de/~marc/vam/index.php
+	"   to fetch VAM, VAM-known-repositories and the listed plugins
+	" without having to install curl, unzip, git tool chain first
+	" -> BUG [4] (git-less installation)
+	if !filereadable(vam_install_path.'/vim-addon-manager/.git/config') && 1 == confirm("git clone VAM into ".vam_install_path."?","&Y\n&N")
+		" I'm sorry having to add this reminder.  Eventually it'll pay off.
+		call confirm("Remind yourself that most plugins ship with documentation (README*, doc/*.txt).  Its your first source of knowledge.  If you can't find the info you're looking for in reasonable time ask maintainers to improve documentation")
+		exec '!p='.shellescape(vam_install_path).'; mkdir -p "$p" && cd "$p" && git clone --depth 1 git://github.com/MarcWeber/vim-addon-manager.git'
+		" VAM run helptags automatically if you install or update plugins
+		exec 'helptags '.fnameescape(vam_install_path.'/vim-addon-manager/doc')
+	endif
+
+	" Example drop git sources unless git is in PATH.  Same plugins can
+	" be installed form www.vim.org.  Lookup MergeSources to get more control
+	" let g:vim_addon_manager['drop_git_sources'] = !executable('git')
+			  
+	call vam#ActivateAddons(["fugitive", "snipmate-snippets", "github:scrooloose/syntastic", "github:sontek/minibufexpl.vim", "github:vim-scripts/The-NERD-tree", "github:vim-scripts/TaskList.vim", "Command-T", "pep8%2914"], {'auto_install' : 0})
+	" sample: call vam#ActivateAddons(['pluginA','pluginB', ...], {'auto_install' : 0})
+	" - look up source from pool (<c-x><c-p> complete plugin names):
+	" ActivateAddons(["foo", ..
+	" - name rewritings: 
+	" ..ActivateAddons(["github:foo", ..  => github://foo/vim-addon-foo
+	" ..ActivateAddons(["github:user/repo", ..  => github://user/repo
+	" Also see section "2.2.  names of addons and addon sources" in VAM's documentation
+endfun
+call SetupVAM()
+" experimental: run after gui has been started (gvim) [3]
+" option1: au VimEnter * call SetupVAM()
+" option2: au GUIEnter * call SetupVAM()
+" See BUGS sections below [*]
+" Vim 7.0 users see BUGS section [3]
+			  
+" for apple terminal meta keys problem
+" http://www.vim.org/tips/tip.php?tip_id=738
