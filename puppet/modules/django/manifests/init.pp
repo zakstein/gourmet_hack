@@ -5,6 +5,11 @@ class django {
         require => [Exec['apt-key-update'], Package['python']],
     }
 	
+    package { 'python-jinja2':
+		ensure => installed,
+		require => Package['python-django'],
+    }
+
 	package { 'python-psycopg2' :
 		ensure => installed,
 		require => Package['python-django'],
