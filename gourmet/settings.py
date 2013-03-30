@@ -127,6 +127,7 @@ INSTALLED_APPS = (
 	'jinja2',
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
+    'restaurant_list',
 )
 
 ACCOUNT_ACTIVATION_DAYS = 30 # Used for registration and account activation
