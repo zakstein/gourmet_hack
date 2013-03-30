@@ -28,4 +28,12 @@ node precise32 {
         password => '3atingmakesyouf4t',
     }
 
+    postgresql::pg_hba_rule { 'allow gourmet local to access app database':
+      description => "Open up postgresql for access from localhost",
+      type => 'local',
+      database => 'gourmet',
+      user => 'vagrant',
+      auth_method => 'md5',
+    }
+
 }
