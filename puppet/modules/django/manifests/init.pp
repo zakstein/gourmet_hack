@@ -10,6 +10,11 @@ class django {
 		require => Package['python-django'],
 	}
 
+	package { 'python-django-registration' :
+		ensure => installed,
+		require => Package['python-django'],
+	}
+
 	package { 'python-django-south' :
 		ensure => installed,
 		require => Package['python-django'],
