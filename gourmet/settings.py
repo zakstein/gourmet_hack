@@ -124,6 +124,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'registration',
     'south',
+	'jinja2',
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
 )
