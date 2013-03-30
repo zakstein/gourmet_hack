@@ -6,11 +6,14 @@ Replace this with more appropriate tests for your application.
 """
 
 from django.test import TestCase
+from django.contrib.auth.models import User
+from models import RestaurantList, restaurant_list_for_user
+from mock import MagicMock, patch
 
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+class RestaurantListTest(TestCase):
+    @patch.object(RestaurantList, 'save')
+    def test_restaurant_list_for_user_creates_new_restaurant_list(self, mock_method):
+        user = User(username='zakstein', password='test1234')
+        restaurant_list_for_user(user)
+        mock_method.assert_called_with()

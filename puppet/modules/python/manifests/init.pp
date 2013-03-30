@@ -14,4 +14,9 @@ class python {
 		ensure => 'latest',
 		require => Exec['apt-key-update'],
 	}
+
+        package { 'python-pip':
+                ensure => 'latest',
+                require => Package['python'],
+        }
 }

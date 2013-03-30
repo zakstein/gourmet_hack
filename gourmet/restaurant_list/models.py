@@ -7,7 +7,25 @@ class Restaurant(models.Model):
     location = models.CharField(max_length=512)
 
 class RestaurantList(models.Model):
-    owner = models.ForeignKey(auth_models.User)
+    owner = models.OneToOneField(auth_models.User)
+
+    def update_restaurant_list_with_file_data(self, file_data):
+        """
+        Takes in a xlrd work_book and instantiates the
+        """
+
+def restaurant_list_for_user(user):
+    """
+    Returns restaurant list associated with a given user
+    It will create one if none exist
+    """
+    if not user.restaurantlist:
+        restaurant_list = RestaurantList(owner=user)
+        restaurant_list.save()
+    else:
+        restaurant_list = user.restaurantlist
+
+    return restaurant_list
 
 class RestaurantListElement(models.Model):
     restaurantList = models.ForeignKey('RestaurantList')
