@@ -5,7 +5,7 @@
 {% endblock %}
 {% block "content" %}
 <h1>Welcome to the Cookie Monster Project!</h1>
-<form action="/submit/" method="post">
+<form action="/accounts/register/complete/" method="post">{% csrf_token %}
 	{{form.as_p}}
 	<input type="submit" value="Submit"/>
 </form>
