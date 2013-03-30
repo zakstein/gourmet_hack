@@ -67,8 +67,8 @@ let g:syntastic_enable_signs=1
 let g:syntastic_auto_loc_list=1
 
 """"" NERDTREE
-autocmd vimenter * NERDTree
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+""autocmd vimenter * NERDTree
+""autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
 """" PEP8
 let g:pep8_map = '<leader>8'
