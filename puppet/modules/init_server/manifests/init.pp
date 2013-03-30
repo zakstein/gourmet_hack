@@ -66,4 +66,6 @@ class init_server {
 	init_server::dotfile{'functions': }
 
 	init_server::dotfile{'exports': }
+
+	init_server::local_dotfile{'.bashrc': }
 }

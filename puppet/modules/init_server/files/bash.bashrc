@@ -16,7 +16,7 @@ if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
 fi
 
 # set a fancy prompt (non-color, overwrite the one in /etc/profile)
-PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+# PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 
 # Commented out, don't overwrite xterm -T "title" -n "icontitle" by default.
 # If this is an xterm set the title to user@host:dir
@@ -64,7 +64,7 @@ fi
 
 # Load /etc/bash_prompt, /etc/exports, /etc/aliases, /etc/functions and /etc/extra
 # /etc/extra can be used for settings you don’t want to commit
-for file in bash_prompt exports functions extra; do
+for file in exports functions extra; do
 	file="/etc/$file"
 	[ -e "$file" ] && source "$file"
 done
@@ -108,7 +108,6 @@ alias c="tr -d '\n' | pbcopy"
 alias v="cd /vagrant"
 alias p="cd /vagrant/puppet"
 alias g="git"
-alias v="vim"
 alias ssa="sudo service apache2 restart"
 alias vsnip="vim ~/.vim/vim-addons/snipmate-snippets/snippets/$1.vim"
 
@@ -123,3 +122,41 @@ alias rot13='tr a-zA-Z n-za-mN-ZA-M'
 # One of @janmoesen’s ProTip™s
 for method in GET HEAD POST PUT DELETE TRACE OPTIONS; do alias "$method"="lwp-request -m '$method'"; done
 
+# @gf3’s Sexy Bash Prompt, inspired by "Extravagant Zsh Prompt"
+# Shamelessly copied from https://github.com/gf3/dotfiles
+
+if tput setaf 1 &> /dev/null; then
+tput sgr0
+	if [[ $(tput colors) -ge 256 ]] 2>/dev/null; then
+	MAGENTA=$(tput setaf 9)
+	ORANGE=$(tput setaf 172)
+	GREEN=$(tput setaf 190)
+	PURPLE=$(tput setaf 141)
+WHITE=$(tput setaf 256)
+	else
+	MAGENTA=$(tput setaf 5)
+	ORANGE=$(tput setaf 4)
+	GREEN=$(tput setaf 2)
+	PURPLE=$(tput setaf 1)
+WHITE=$(tput setaf 7)
+	fi
+	BOLD=$(tput bold)
+RESET=$(tput sgr0)
+	else
+	MAGENTA="\033[1;31m"
+	ORANGE="\033[1;33m"
+	GREEN="\033[1;32m"
+	PURPLE="\033[1;35m"
+	WHITE="\033[1;37m"
+	BOLD=""
+	RESET="\033[m"
+	fi
+
+	parse_git_dirty () {
+		[[ $(git status 2> /dev/null | tail -n1) != "nothing to commit (working directory clean)" ]] && echo "*"
+	}
+parse_git_branch () {
+	git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/\1$(parse_git_dirty)/"
+}
+
+PS1="\[${BOLD}${MAGENTA}\]\u\[$WHITE\]@\[$ORANGE\]\h\[$WHITE\]:\[$GREEN\]\w\[$WHITE\]\$([[ -n \$(git branch 2> /dev/null) ]] && echo \" on \")\[$PURPLE\]\$(parse_git_branch)\[$WHITE\]\$ \[$RESET\]"
