@@ -24,4 +24,19 @@ class python {
         ensure => 'latest',
         require => Package['python'],
     }
+
+    file { '/tmp/xlrd':
+                source => "puppet:///modules/python/xlrd",
+        ensure => 'present',
+        recurse => true,
+        require => Package['python'],
+    }
+
+    exec {'python setup.py install':
+                cwd => '/tmp/xlrd',
+                path => $path,
+                user => 'root',
+                group => 'root',
+        require => Package['python'],
+    }
 }

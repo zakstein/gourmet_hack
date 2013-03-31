@@ -1,4 +1,4 @@
-
+from spreadsheet_row import SpreadsheetRow
 
 class Spreadsheet(object):
 
@@ -31,7 +31,16 @@ class Spreadsheet(object):
         row_results = []
 
         for i in range(1, min(self.MAX_SPREADSHEET_ROW_COUNT, sheet.nrows) + 1):
-            row = sheet.row(i)
+            try:
+                row = SpreadsheetRow(
+                    sheet.row(i),
+                    self.list_model,
+                    self.header_to_column_index,
+                    self.required_headers
+                )
+            except Exception:
+                pass
+
 
     def _get_headers_from_sheet(self, sheet):
         """
@@ -54,13 +63,9 @@ class Spreadsheet(object):
 
     def _map_header_name_to_column_index(self, headers):
         """
-        This takes the fields from the list_model and maps them to the proper columns
+        Maps the header column indexes to their values
         """
-        field_names = self.list_model._meta.get_all_field_names()
 
-        index = 0
-        for header in headers:
-            if header.value.lower() in field_names:
-                self.header_to_column_index[header.value] = index
+        for idx, header in enumerate(headers):
+            self.header_to_column_index[idx] = header.value
 
-            index += 1

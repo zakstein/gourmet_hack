@@ -10,11 +10,6 @@ class django {
 		require => Package['python-django'],
     }
 
-    package { 'python-xlrd':
-                ensure => installed,
-                require => Package['python-django'],
-    }
-
     package { 'python-mock':
                 ensure => installed,
                 require => Package['python-django'],

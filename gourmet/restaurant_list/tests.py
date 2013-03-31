@@ -48,9 +48,9 @@ class SpreadsheetTest(TestCase):
 
         self.sheet._map_header_name_to_column_index(headers)
 
-        self.assertEqual(0, self.sheet.header_to_column_index['Restaurant'])
-        self.assertEqual(3, self.sheet.header_to_column_index['Rating'])
-        self.assertEqual(5, self.sheet.header_to_column_index['Notes'])
+        self.assertEqual('Restaurant', self.sheet.header_to_column_index[0])
+        self.assertEqual('Rating', self.sheet.header_to_column_index[3])
+        self.assertEqual('Notes', self.sheet.header_to_column_index[5])
 
     class CellMock(object):
 
