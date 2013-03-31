@@ -1,22 +1,23 @@
 from spreadsheet_row import SpreadsheetRow
+from exceptions import RequiredColumnNotFound
 
 class Spreadsheet(object):
 
     MAX_SPREADSHEET_ROW_COUNT = 1000
 
-    def __init__(self, list_model, data, required_headers):
+    def __init__(self, list_model_instance, data, required_headers):
         """
         Takes in a list model to translate to and the raw spreadsheet data
         The required headers are headers that if we don't find, we will throw an error
         """
-        self.list_model = list_model
+        self.list_model_instance = list_model_instance
         self.data = data
         self.required_headers = required_headers
         self.header_to_column_index = {}
 
-    def parse(self):
+    def parse(self, list_element_model):
         """
-        The main function in the module: We parse the spreadsheet into list_model
+        The main function in the module: We parse the spreadsheet into list_element_model
         objects
         """
 
@@ -34,12 +35,18 @@ class Spreadsheet(object):
             try:
                 row = SpreadsheetRow(
                     sheet.row(i),
-                    self.list_model,
+                    list_element_model,
                     self.header_to_column_index,
-                    self.required_headers
+                    self.required_headers,
+                    self.list_model_instance,
                 )
-            except Exception:
+                row.parse_row()
+                row_results.append(row)
+            except RequiredColumnNotFound:
+                # Ignore for now
                 pass
+
+        return row_results
 
 
     def _get_headers_from_sheet(self, sheet):

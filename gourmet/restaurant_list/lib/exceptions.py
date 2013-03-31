@@ -1,0 +1,2 @@
+class RequiredColumnNotFound(Exception):
+    pass

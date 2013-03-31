@@ -35,3 +35,14 @@ class RestaurantListElement(models.Model):
     rating = models.PositiveIntegerField()
     has_been = models.BooleanField()
     notes = models.TextField()
+
+    def set_field_from_spreadsheet_cell(self, cell_name, cell_value):
+        if cell_name != 'restaurant':
+            setattr(self, cell_name, cell_value)
+        else:
+            # Fetch likely restaurant from API
+            # Set restaurant via relationship
+            pass
+
+    def set_list(self, list_model_instance):
+        self.restaurantList = list_model_instance
