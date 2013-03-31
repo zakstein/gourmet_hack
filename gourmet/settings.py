@@ -107,7 +107,7 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'urls'
 
-TEMPLATE_DIRS = ('/vagrant/gourmet/templates/'
+TEMPLATE_DIRS = ( '/usr/local/lib/python2.7/dist-packages/userena/templates/userena/', '/vagrant/gourmet/templates'
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -122,16 +122,16 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
-    #'registration',
-        'gourmet_registration',
+    'accounts',
+        'userena',
+        'guardian',
+        'easy_thumbnails',
     'south',
 	'jinja2',
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
     'restaurant_list',
 )
-
-ACCOUNT_ACTIVATION_DAYS = 30 # Used for registration and account activation
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -154,4 +154,21 @@ LOGGING = {
             'propagate': True,
         },
     }
-}
+        }
+
+#Userena stuff
+AUTHENTICATION_BACKENDS = (
+        'userena.backends.UserenaAuthenticationBackend',
+        'guardian.backends.ObjectPermissionBackend',
+        'django.contrib.auth.backends.ModelBackend',
+)
+
+
+ANONYMOUS_USER_ID = -1
+AUTH_PROFILE_MODULE = 'accounts.UserProfile'
+
+LOGIN_REDIRECT_URL = '/accounts/%(username)s/'
+LOGIN_URL = '/accounts/login/'
+LOGOUT_URL = '/accounts/logout/'
+
+USERENA_ACTIVATION_REQUIRED = False
