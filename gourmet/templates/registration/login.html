@@ -6,7 +6,7 @@
 {% block "content" %}
 <h1>Login to the Cookie Monster Project!</h1>
 <form action="/accounts/login/" method="POST">{% csrf_token %}
-	{{form.as_p}}
+        {{ form.as_p }}
 	<input type="submit" value="Submit"/>
 </form>
 {% endblock %}

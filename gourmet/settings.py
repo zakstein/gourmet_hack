@@ -122,7 +122,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
-    'registration',
+    #'registration',
+        'gourmet_registration',
     'south',
 	'jinja2',
     # Uncomment the next line to enable admin documentation:
