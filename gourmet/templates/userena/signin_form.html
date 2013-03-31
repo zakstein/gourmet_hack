@@ -8,10 +8,10 @@
 <form action="" method="post">
   {% csrf_token %}
   <fieldset>
-    <legend>{% trans "Signin" %}</legend>
-    {{ form.non_field_errors }}
+          <h3><p>Sign in</p></h3>
+          <span class="text-error">{{ form.non_field_errors }}</span>
     {% for field in form %}
-    {{ field.errors }}
+        <span class = "text-error">{{ field.errors }}</span>
     {% comment %} Displaying checkboxes differently {% endcomment %}
     {% if field.name == 'remember_me' %}
     <p class="checkbox">
