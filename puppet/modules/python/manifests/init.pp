@@ -15,8 +15,13 @@ class python {
 		require => Exec['apt-key-update'],
 	}
 
-        package { 'python-pip':
-                ensure => 'latest',
-                require => Package['python'],
-        }
+    package {'python-imaging':
+        ensure => 'latest',
+        require => Package['python'],
+    }
+
+    package { 'python-pip':
+        ensure => 'latest',
+        require => Package['python'],
+    }
 }

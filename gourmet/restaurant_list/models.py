@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import models as auth_models
+from django.core.exceptions import ObjectDoesNotExist
 
 class Restaurant(models.Model):
     name = models.CharField(max_length=255)
@@ -11,19 +12,20 @@ class RestaurantList(models.Model):
 
     def update_restaurant_list_with_file_data(self, file_data):
         """
-        Takes in a xlrd work_book and instantiates the
+        Takes in a xlrd work_book and populates the database
         """
+        pass
 
 def restaurant_list_for_user(user):
     """
     Returns restaurant list associated with a given user
     It will create one if none exist
     """
-    if not user.restaurantlist:
+    try:
+        restaurant_list = user.restaurantlist
+    except ObjectDoesNotExist:
         restaurant_list = RestaurantList(owner=user)
         restaurant_list.save()
-    else:
-        restaurant_list = user.restaurantlist
 
     return restaurant_list
 
