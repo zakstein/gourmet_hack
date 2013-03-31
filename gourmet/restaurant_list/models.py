@@ -34,3 +34,4 @@ class RestaurantListElement(models.Model):
     restaurant = models.ForeignKey('Restaurant')
     rating = models.PositiveIntegerField()
     has_been = models.BooleanField()
+    notes = models.TextField()

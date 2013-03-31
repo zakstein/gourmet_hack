@@ -1,13 +1,9 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
-"""
+import xlrd
 
 from django.test import TestCase
 from django.contrib.auth.models import User
-from models import RestaurantList, restaurant_list_for_user
+from models import RestaurantList, RestaurantListElement, restaurant_list_for_user
+from lib.spreadsheet import Spreadsheet
 from mock import MagicMock, patch
 
 
@@ -26,3 +22,39 @@ class RestaurantListTest(TestCase):
         restaurant_list.save()
         same_restaurant_list = restaurant_list_for_user(user)
         self.assertEqual(restaurant_list, same_restaurant_list)
+
+class SpreadsheetTest(TestCase):
+    def setUp(self):
+        self.book = xlrd.open_workbook('restaurant_list/sophia_test_data.xlsx')
+        self.sheet = Spreadsheet(RestaurantListElement, self.book, ['Restaurant'])
+
+    def test_get_headers_returns_correctly(self):
+        headers = self.sheet._get_headers_from_sheet(self.book.sheet_by_index(0))
+        self.assertEqual(9, len(headers))
+        self.assertEqual(u'Restaurant', headers[0].value)
+
+    def test_check_headers_returns_true_when_headers_are_present(self):
+        headers = self.sheet._get_headers_from_sheet(self.book.sheet_by_index(0))
+
+        self.assertTrue(self.sheet._check_headers_have_required_headers(headers))
+
+    def test_check_headers_returns_false_when_headers_are_not_present(self):
+        headers = [ self.CellMock(ctype=1, value=u'notrestaurant')]
+
+        self.assertFalse(self.sheet._check_headers_have_required_headers(headers))
+
+    def test_map_header_name_to_column_index_correctly_maps_headers(self):
+        headers = self.sheet._get_headers_from_sheet(self.book.sheet_by_index(0))
+
+        self.sheet._map_header_name_to_column_index(headers)
+
+        self.assertEqual(0, self.sheet.header_to_column_index['Restaurant'])
+        self.assertEqual(3, self.sheet.header_to_column_index['Rating'])
+        self.assertEqual(5, self.sheet.header_to_column_index['Notes'])
+
+    class CellMock(object):
+
+        def __init__(self, ctype, value):
+            self.ctype = ctype
+            self.value = value
+
