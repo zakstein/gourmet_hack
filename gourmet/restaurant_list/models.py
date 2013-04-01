@@ -5,7 +5,14 @@ from django.core.exceptions import ObjectDoesNotExist
 class Restaurant(models.Model):
     name = models.CharField(max_length=255)
     url = models.CharField(max_length=1023)
-    location = models.CharField(max_length=512)
+    full_address = models.CharField(max_length=1023)
+    address = models.CharField(max_length=256)
+    city = models.CharField(max_length=128)
+    state = models.CharField(max_length=64)
+    zip_code = models.IntegerField()
+    neighborhood = models.CharField(max_length=128)
+    # Note: this version of django does not yet support PointField, so we just use a char field
+    geo_coordinate = models.CharField(max_length=1024)
 
 class RestaurantList(models.Model):
     owner = models.OneToOneField(auth_models.User)
