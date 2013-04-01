@@ -83,7 +83,8 @@ class SpreadsheetRowTest(TestCase):
             row=None,
             list_element_model=RestaurantListElement,
             header_column_map=None,
-            required_columns=['restaurant']
+            required_columns=['restaurant'],
+           list_model_instance=RestaurantList()
         )
 
     def test_parse_row_correctly_parses_row(self):
@@ -103,9 +104,9 @@ class SpreadsheetRowTest(TestCase):
 
         self.row.parse_row()
 
-        print self.row.list_model_element_instance
+        print self.row.list_element_model_instance
         print self.row.unclassified_info
-        print model_to_dict(self.row.list_model_element_instance)
+        print model_to_dict(self.row.list_element_model_instance)
 
     def test_update_required_column_count_with_header_name_correctly_updates(self):
         self.row._update_required_column_count_with_header_name('restaurant', self.required_column_count)

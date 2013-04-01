@@ -25,6 +25,11 @@ class python {
         require => Package['python'],
     }
 
+    package { 'python-oauth2':
+        ensure => 'latest',
+        require => Package['python'],
+    }
+
     file { '/tmp/xlrd':
                 source => "puppet:///modules/python/xlrd",
         ensure => 'present',

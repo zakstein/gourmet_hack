@@ -1,4 +1,6 @@
 from django.db import models
+from lib.api import MatchAPI
+from lib.exceptions import RequiredColumnNotFound
 from django.contrib.auth import models as auth_models
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -43,13 +45,27 @@ class RestaurantListElement(models.Model):
     has_been = models.BooleanField()
     notes = models.TextField()
 
-    def set_field_from_spreadsheet_cell(self, cell_name, cell_value):
-        if cell_name != 'restaurant':
-            setattr(self, cell_name, cell_value)
-        else:
-            # Fetch likely restaurant from API
-            # Set restaurant via relationship
-            pass
+    def set_fields_from_spreadsheet_row(self, row, header_column_map):
+        unclassified_info = {}
+        for idx, cell in enumerate(row):
+            cell_name = header_column_map[idx].lower()
+            cell_value = cell.value
+            model_field_names = self._meta.get_all_field_names()
+            if cell_name in model_field_names:
+                if cell_name != 'restaurant':
+                    setattr(self, cell_name, cell_value)
+                else:
+                    restaurant_name = cell_value
+            else:
+                unclassified_info[cell_name] = cell_value
+
+        if not unclassified_info['address']:
+            raise RequiredColumnNotFound('Address is a required field')
+
+        api = MatchAPI(restaurant_name, unclassified_info['address'])
+        api.execute()
+
+
 
     def set_list(self, list_model_instance):
         self.restaurantList = list_model_instance
