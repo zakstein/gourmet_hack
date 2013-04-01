@@ -4,20 +4,24 @@
 <html lang="en">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>{% block title %}Userena{% endblock %}</title>
+  <title>{% block title %}{% endblock %}</title>
   {% block meta %}{% endblock %}
 </head>
+{% block styles %}
+{% endblock %}
 <link rel="stylesheet" type ="text/css" href="/css/bootstrap.css">
 <body id="{% block body_id %}{% endblock %}" class="{% block body_class %}{% endblock %}">
-  <div id="body">
     {% block body %}
-      <div class="content_title">
-        {% block content_title %}{% endblock %}
-      </div>
       <div class="content">
         {% block content %}{% endblock %}
       </div>
-    {% endblock %}
-  </div>
+	  {% block footer %}
+	  	<footer class="footer meta">
+	  		<a href="/about_us/">About us</a> &middot; 
+			<a href="mailto:zakstein@gmail.com">Contact us</a> &middot;
+			&copy; 2013
+		</footer>
+	  {% endblock %}
+	{% endblock %}
 </body>
 </html>
