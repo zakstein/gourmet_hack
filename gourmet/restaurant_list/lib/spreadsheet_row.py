@@ -23,28 +23,27 @@ class SpreadsheetRow(object):
         """
         Parses the raw spreadsheet row into the list_model class and unclassified info
         """
+        self.unclassified_info = self.list_element_model_instance.set_all_fields_from_spreadsheet_row_and_save(
+            self.row,
+            self.header_column_map,
+        )
+
+        if not self._check_required_columns_are_present():
+            raise RequiredColumnNotFound('Required column not populated')
+
+    def _check_required_columns_are_present(self):
+        """
+        Checks if the required columns are present and returns true if they are
+        """
         required_columns_count = dict(zip(
             self.required_columns,
             [0] * len(self.required_columns)
         ))
-
-        self.unclassified_info = self.list_element_model_instance.set_fields_from_spreadsheet_row(
-            self.row,
-            self.header_column_map,
-        )
         for idx, cell in enumerate(self.row):
             self._update_required_column_count_with_header_name(
                 self.header_column_map[idx].lower(),
                 required_columns_count
             )
-
-        if not self._check_required_columns_are_present(required_columns_count):
-            raise RequiredColumnNotFound('Required column not populated')
-
-    def _check_required_columns_are_present(self, required_columns_count):
-        """
-        Checks if the required columns are present and returns true if they are
-        """
         for required_column, count in required_columns_count.items():
             if count != 1:
                 return False

@@ -2,7 +2,6 @@ import oauth2
 import json
 import urllib2
 import urllib
-import sys
 
 
 # Usage:

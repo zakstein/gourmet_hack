@@ -7,4 +7,4 @@ then
     mkdir /tmp/vagrant-puppet
 fi
 
-#apt-get update
+apt-get update

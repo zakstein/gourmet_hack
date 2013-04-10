@@ -10,3 +10,6 @@ def upload_restaurant_list_from_file(request):
 
         restaurant_list = restaurant_list_for_user(request.user)
         restaurant_list.update_restaurant_list_with_file_data(book)
+
+def display_restaurant_list(request):
+    pass
