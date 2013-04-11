@@ -13,7 +13,7 @@ class SpreadsheetRow(object):
     ):
         self.row = row
         self.list_element_model_instance = list_element_model()
-        self.header_column_map = header_column_map
+        self.header_to_column_index_map = header_column_map
         self.required_columns = required_columns
         self.unclassified_info = {}
 
@@ -25,7 +25,7 @@ class SpreadsheetRow(object):
         """
         self.unclassified_info = self.list_element_model_instance.set_all_fields_from_spreadsheet_row_and_save(
             self.row,
-            self.header_column_map,
+            self.header_to_column_index_map,
         )
 
         if not self._check_required_columns_are_present():
@@ -41,7 +41,7 @@ class SpreadsheetRow(object):
         ))
         for idx, cell in enumerate(self.row):
             self._update_required_column_count_with_header_name(
-                self.header_column_map[idx].lower(),
+                self.header_to_column_index_map[idx].lower(),
                 required_columns_count
             )
         for required_column, count in required_columns_count.items():

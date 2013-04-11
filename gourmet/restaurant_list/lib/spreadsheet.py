@@ -13,7 +13,7 @@ class Spreadsheet(object):
         self.list_model_instance = list_model_instance
         self.data = data
         self.required_headers = required_headers
-        self.header_to_column_index = {}
+        self.header_to_column_index_map = {}
 
     def parse(self, list_element_model):
         """
@@ -36,7 +36,7 @@ class Spreadsheet(object):
                 row = SpreadsheetRow(
                     sheet.row(i),
                     list_element_model,
-                    self.header_to_column_index,
+                    self.header_to_column_index_map,
                     self.required_headers,
                     self.list_model_instance,
                 )
@@ -74,5 +74,5 @@ class Spreadsheet(object):
         """
 
         for idx, header in enumerate(headers):
-            self.header_to_column_index[idx] = header.value
+            self.header_to_column_index_map[idx] = header.value
 

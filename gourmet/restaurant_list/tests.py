@@ -62,9 +62,9 @@ class SpreadsheetTest(TestCase):
 
         self.sheet._map_header_name_to_column_index(headers)
 
-        self.assertEqual('Restaurant', self.sheet.header_to_column_index[0])
-        self.assertEqual('Rating', self.sheet.header_to_column_index[3])
-        self.assertEqual('Notes', self.sheet.header_to_column_index[5])
+        self.assertEqual('Restaurant', self.sheet.header_to_column_index_map[0])
+        self.assertEqual('Rating', self.sheet.header_to_column_index_map[3])
+        self.assertEqual('Notes', self.sheet.header_to_column_index_map[5])
 
     class CellMock(object):
 
@@ -93,7 +93,7 @@ class RestaurantListElementTest(TestCase):
         list_element.restaurantList = restaurant_list
         list_element.set_all_fields_from_spreadsheet_row_and_save(
             self.book.sheet_by_index(0).row(1),
-            self.sheet.header_to_column_index
+            self.sheet.header_to_column_index_map
         )
 
 
@@ -125,7 +125,7 @@ class SpreadsheetRowTest(TestCase):
             self.spreadsheet._get_headers_from_sheet(self.first_sheet)
         )
         self.row.row = self.first_sheet.row(1)
-        self.row.header_column_map =  self.spreadsheet.header_to_column_index
+        self.row.header_to_column_index_map =  self.spreadsheet.header_to_column_index_map
 
         self.row.parse_row()
 

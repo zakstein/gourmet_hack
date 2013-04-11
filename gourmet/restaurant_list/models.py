@@ -72,8 +72,6 @@ class RestaurantListElement(models.Model):
         else:
             unclassified_info += restaurant_info
 
-        print model_to_dict(self)
-
         return unclassified_info
 
     def _process_row_columns(self, row, header_column_map):
@@ -86,8 +84,6 @@ class RestaurantListElement(models.Model):
         self_fields = {}
         model_field_names = self._meta.get_all_field_names()
         restaurant_field_names = Restaurant._meta.get_all_field_names()
-        print "row:"
-        print row
         for idx, cell in enumerate(row):
             cell_name = header_column_map[idx].lower()
             cell_value = cell.value
@@ -137,8 +133,6 @@ class RestaurantListElement(models.Model):
             return '{} {}'.format(info['address'], info['city'])
 
         return info['address']
-
-
 
     def set_list(self, list_model_instance):
         self.restaurantList = list_model_instance
