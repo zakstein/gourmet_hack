@@ -1,4 +1,4 @@
 from django import forms
 
 class UploadRestaurantFileForm(forms.Form):
-    restaurant_file = forms.FileField()
+    input_spreadsheet = forms.FileField()

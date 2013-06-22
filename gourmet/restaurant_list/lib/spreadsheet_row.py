@@ -7,17 +7,15 @@ class SpreadsheetRow(object):
     def __init__(self,
                  row,
                  list_element_model,
-                 header_column_map,
-                 required_columns,
-                 list_model_instance
+                 spreadsheet
     ):
         self.row = row
         self.list_element_model_instance = list_element_model()
-        self.header_to_column_index_map = header_column_map
-        self.required_columns = required_columns
+        self.header_to_column_index_map = spreadsheet.header_to_column_index_map
+        self.required_columns = spreadsheet.required_headers
         self.unclassified_info = {}
 
-        self.list_element_model_instance.set_list(list_model_instance)
+        self.list_element_model_instance.set_list(spreadsheet.list_model_instance)
 
     def parse_row(self):
         """
@@ -53,4 +51,4 @@ class SpreadsheetRow(object):
 
     def _update_required_column_count_with_header_name(self, header_name, required_columns_count):
         if header_name in self.required_columns:
-            required_columns_count[header_name.lower()] += 1
+            required_columns_count[header_name] += 1

@@ -23,5 +23,14 @@
 		</footer>
 	  {% endblock %}
 	{% endblock %}
+	<script src="/js/lib/jquery-1.9.1.min.js"></script>
+	<script src="/js/lib/jquery.form.js"></script>
+	<script src="/js/core/application.js"></script>
+	<script src="/js/core/context.js"></script>
+	{% block javascript_includes %}
+	{% endblock %}
+	<script>
+		Application.init();
+	</script>
 </body>
 </html>

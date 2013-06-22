@@ -2,6 +2,8 @@ import oauth2
 import json
 import urllib2
 import urllib
+import urlparse
+import difflib
 
 
 # Usage:
@@ -42,53 +44,43 @@ class MatchAPI:
                         self.url_params = {'term': self.name, 'location': self.location, 'limit': self.MAX_RESULTS, 'category_filter': self.CATEGORIES}
 
         def request(self):
-                #unsigned URL
-                encoded_params = ''
-                if self.url_params:
-                                encoded_params = urllib.urlencode(self.url_params)
-                url = '%s?%s' % (self.PATH, encoded_params)
-                print 'URL: %s' % (url,)
 
                 #Sign the URL
+                url_params = {}
+                # oauth doesn't handle unicode very well, so I've done some of the url construction manually
+                for k,v in self.url_params.iteritems():
+                    if isinstance(v, unicode):
+                        v = v.encode('utf-8')
+                    url_params[k] = v
+                url = self.PATH + '?' + urllib.urlencode(url_params)
                 consumer = oauth2.Consumer(self.CONSUMER_KEY, self.CONSUMER_SECRET)
-                oauth_request = oauth2.Request('GET', url, {})
-                oauth_request.update({'oauth_nonce': oauth2.generate_nonce(),'oauth_timestamp': oauth2.generate_timestamp(), 'oauth_token': self.TOKEN,'oauth_consumer_key': self.CONSUMER_KEY})
+                oauth_request = oauth2.Request('GET', url=url)
+                oauth_request.update({
+                    'oauth_nonce': oauth2.generate_nonce(),
+                    'oauth_timestamp': oauth2.generate_timestamp(),
+                    'oauth_token': self.TOKEN,
+                    'oauth_consumer_key': self.CONSUMER_KEY
+                })
                 token = oauth2.Token(self.TOKEN, self.TOKEN_SECRET)
                 oauth_request.sign_request(oauth2.SignatureMethod_HMAC_SHA1(), consumer, token)
-                signed_url = oauth_request.to_url()
-                #print 'Signed URL: %s\n' % (signed_url,)
+                signed_url = self.to_url(oauth_request)
 
                 # Connect
                 try:
-                                conn = urllib2.urlopen(signed_url, None)
-                                try:
-                                                response = json.loads(conn.read())
-                                finally:
-                                                conn.close()
+                    print signed_url
+                    conn = urllib2.urlopen(signed_url, None)
+                    try:
+                        response = json.loads(conn.read())
+                    finally:
+                        conn.close()
                 except urllib2.HTTPError, error:
-                                response = json.loads(error.read())
+                    response = json.loads(error.read())
                 return response
 
         def top_match_confidence_check(self):
-                ignore_words = ['the','of','by','in','on']
-                name_list = self.name.lower().split(' ')
-                top_match_name = self.top_match['name'].lower()
-                bool_name_match = False
-                count_of_key_words = 0
-                count_of_key_words_matched = 0
-
-                for word in name_list:
-                        if word not in ignore_words:
-                                count_of_key_words += 1
-                                if word in top_match_name:
-                                        count_of_key_words_matched += 1
-                if count_of_key_words_matched/count_of_key_words > self.RATIO_OF_KEY_WORDS_MATCHED_CONFIDENCE  and self.number_of_responses < self.TOTAL_NUMBER_OF_MATCHES_CONFIDENCE:
-                        self.match_confidence = True
-                print name_list
-                print top_match_name
-                print count_of_key_words
-                print count_of_key_words_matched
-                print self.number_of_responses
+                matcher = difflib.SequenceMatcher(None, self.name, self.top_match['name'])
+                ratio = matcher.ratio();
+                self.match_confidence = ratio > .75
 
         def parse_response(self, response):
                 businesses = []
@@ -101,17 +93,52 @@ class MatchAPI:
                 if self.name is "" or self.location is "":
                                 return
                 response = self.request()
+                if not 'total' in response:
+                    return
+
                 self.number_of_responses = int(response['total'])
-                print self.number_of_responses
 
                 if response['total'] == 0:
                                 return
                 self.parse_response(response)
                 self.top_match_confidence_check()
 
+        def to_url(self, oauth_request):
+            """
+            I implemented this method because to_url is broken in the Oauth2 library for unicode
+            """
+            base_url = urlparse.urlparse(oauth_request.url)
+            try:
+                query = base_url.query
+            except AttributeError:
+                # must be python <2.5
+                query = base_url[4]
+            query = oauth2.parse_qs(query.encode('utf-8'))
+            for k, v in oauth_request.items():
+                query.setdefault(k.encode('utf-8'), []).append(oauth2.to_utf8_optional_iterator(v))
+
+            try:
+                scheme = base_url.scheme.encode('utf-8')
+                netloc = base_url.netloc.encode('utf-8')
+                path = base_url.path.encode('utf-8')
+                params = base_url.params.encode('utf-8')
+                fragment = base_url.fragment.encode('utf-8')
+            except AttributeError:
+                # must be python <2.5
+                scheme = base_url[0].encode('utf-8')
+                netloc = base_url[1].encode('utf-8')
+                path = base_url[2].encode('utf-8')
+                params = base_url[3].encode('utf-8')
+                fragment = base_url[5].encode('utf-8')
+
+            url = (scheme, netloc, path, params,
+                   urllib.urlencode(query, True), fragment)
+            return urlparse.urlunparse(url)
+
+
 def main():
         name = "tia pol"
-        location = "chelsea new york"
+        location = "New York"
         restaurant = MatchAPI(name,location)
         restaurant.execute()
         print restaurant.top_match

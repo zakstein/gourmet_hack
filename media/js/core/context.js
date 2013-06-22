@@ -8,4 +8,8 @@ Context = function(application, moduleName, moduleId) {
 	this.getService = function(serviceName) {
 		return application.getService(serviceName);
 	};
+
+	this.getElement = function() {
+		return $('#' + moduleId);
+	}
 };

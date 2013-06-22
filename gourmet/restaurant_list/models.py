@@ -1,6 +1,7 @@
 import json
 from django.db import models
 from lib.api import MatchAPI
+from lib.spreadsheet import Spreadsheet
 from lib.exceptions import RequiredColumnNotFound
 from django.contrib.auth import models as auth_models
 from django.core.exceptions import ObjectDoesNotExist
@@ -25,11 +26,14 @@ class Restaurant(models.Model):
 class RestaurantList(models.Model):
     owner = models.OneToOneField(auth_models.User)
 
-    def update_restaurant_list_with_file_data(self, file_data):
+
+    def update_restaurant_list_with_file_data(self, file_book):
         """
         Takes in a xlrd work_book and populates the database
         """
-        pass
+        required_headers = ['restaurant', 'address']
+        spreadsheet = Spreadsheet(self, file_book, required_headers)
+        return spreadsheet.parse(RestaurantListElement)
 
 def restaurant_list_for_user(user):
     """
@@ -67,10 +71,13 @@ class RestaurantListElement(models.Model):
 
         api = MatchAPI(name=restaurant_info['name'], location=self._get_address_including_city(restaurant_info))
         api.execute()
+
         if api.match_confidence:
             self.restaurant = self._fetch_restaurant_from_database_or_api(api, restaurant_info)
         else:
-            unclassified_info += restaurant_info
+            unclassified_info = dict(restaurant_info.items() + unclassified_info.items())
+
+        self.save()
 
         return unclassified_info
 

@@ -37,14 +37,20 @@ class RestaurantListTest(TestCase):
         same_restaurant_list = restaurant_list_for_user(self.user)
         self.assertEqual(restaurant_list, same_restaurant_list)
 
+    def test_update_restaurant_list_with_file_data_works(self):
+        restaurant_list = RestaurantList(owner=self.user)
+        restaurant_list.save()
+        #rows = restaurant_list.update_restaurant_list_with_file_data(xlrd.open_workbook('restaurant_list/sophia_test_data.xlsx', encoding_override='utf-8'))
+        #self.assertEqual(250, len(rows))
+
 class SpreadsheetTest(TestCase):
     def setUp(self):
         self.book = xlrd.open_workbook('restaurant_list/sophia_test_data.xlsx')
-        self.sheet = Spreadsheet(RestaurantListElement, self.book, ['Restaurant'])
+        self.sheet = Spreadsheet(RestaurantListElement, self.book, ['restaurant'])
 
     def test_get_headers_returns_correctly(self):
         headers = self.sheet._get_headers_from_sheet(self.book.sheet_by_index(0))
-        self.assertEqual(9, len(headers))
+        self.assertEqual(10, len(headers))
         self.assertEqual(u'Restaurant', headers[0].value)
 
     def test_check_headers_returns_true_when_headers_are_present(self):
@@ -63,8 +69,8 @@ class SpreadsheetTest(TestCase):
         self.sheet._map_header_name_to_column_index(headers)
 
         self.assertEqual('Restaurant', self.sheet.header_to_column_index_map[0])
-        self.assertEqual('Rating', self.sheet.header_to_column_index_map[3])
-        self.assertEqual('Notes', self.sheet.header_to_column_index_map[5])
+        self.assertEqual('Rating', self.sheet.header_to_column_index_map[4])
+        self.assertEqual('Notes', self.sheet.header_to_column_index_map[6])
 
     class CellMock(object):
 
@@ -75,7 +81,7 @@ class SpreadsheetTest(TestCase):
 class RestaurantListElementTest(TestCase):
     def setUp(self):
         self.book = xlrd.open_workbook('restaurant_list/sophia_test_data.xlsx')
-        self.sheet = Spreadsheet(RestaurantListElement, self.book, ['Restaurant'])
+        self.sheet = Spreadsheet(RestaurantListElement, self.book, ['restaurant'])
         self.sheet._map_header_name_to_column_index(
             self.sheet._get_headers_from_sheet(
                 self.book.sheet_by_index(0)
@@ -103,19 +109,17 @@ class SpreadsheetRowTest(TestCase):
     """
     def setUp(self):
         self.required_column_count = {'restaurant': 0}
-        self.row = SpreadsheetRow(
-            row=None,
-            list_element_model=RestaurantListElement,
-            header_column_map=None,
-            required_columns=['restaurant'],
-           list_model_instance=RestaurantList()
-        )
         self.book = xlrd.open_workbook('restaurant_list/sophia_test_data.xlsx')
         self.first_sheet = self.book.sheet_by_index(0)
         self.spreadsheet = Spreadsheet(
-            RestaurantListElement,
-            self.book,
-            ['Restaurant']
+            list_model_instance=RestaurantList(),
+            data=self.book,
+            required_headers=['restaurant']
+        )
+        self.row = SpreadsheetRow(
+            row=None,
+            list_element_model=RestaurantListElement,
+            spreadsheet=self.spreadsheet
         )
 
     @patch.object(RestaurantListElement, 'set_all_fields_from_spreadsheet_row_and_save')

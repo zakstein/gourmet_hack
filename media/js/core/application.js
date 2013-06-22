@@ -38,6 +38,7 @@ window.Application = (function() {
 
 	function initModuleInstance(moduleName, moduleElement) {
 		var moduleData = modules[moduleName],
+			module,
 			instance,
 			context;
 
@@ -148,6 +149,26 @@ window.Application = (function() {
 				creator: creatorFunction,
 				counter: 1,
 			};
+		},
+
+		/**
+		 * Broadcasts a notification to any modules listening for the given notification name
+		 * @param notificationName
+		 * @param notificationData
+		 */
+		broadcast: function(notificationName, notificationData) {
+			var id,
+					notificationsAcceptedByModule,
+					instanceData;
+			for (var id in instances) {
+				instanceData = instances[id];
+				notificationsAcceptedByModule = instanceData.instance.notifications || [];
+
+				if ($.inArray(notificationName, notificationsAcceptedByModule) != -1) {
+					callModuleMethod(instanceData.instance, 'onnotification', notificationName, notificationData);
+				}
+
+			}
 		},
 
 		/**

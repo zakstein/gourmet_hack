@@ -31,7 +31,7 @@ class Spreadsheet(object):
 
         row_results = []
 
-        for i in range(1, min(self.MAX_SPREADSHEET_ROW_COUNT, sheet.nrows) + 1):
+        for i in range(1, min(self.MAX_SPREADSHEET_ROW_COUNT, sheet.nrows)):
             try:
                 row = SpreadsheetRow(
                     sheet.row(i),
@@ -43,7 +43,7 @@ class Spreadsheet(object):
                 row.parse_row()
                 row_results.append(row)
             except RequiredColumnNotFound:
-                # Ignore for now
+                print "not found!"
                 pass
 
         return row_results
@@ -63,7 +63,7 @@ class Spreadsheet(object):
         """
         required_headers_found_count = 0
         for header in headers:
-            if header.value in self.required_headers:
+            if header.value.lower() in self.required_headers:
                 required_headers_found_count += 1
 
         return required_headers_found_count == len(self.required_headers)

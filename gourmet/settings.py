@@ -123,9 +123,9 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     'accounts',
-        'userena',
-        'guardian',
-        'easy_thumbnails',
+    'userena',
+    'guardian',
+    'easy_thumbnails',
     'south',
 	'jinja2',
     # Uncomment the next line to enable admin documentation:
@@ -162,7 +162,6 @@ AUTHENTICATION_BACKENDS = (
         'guardian.backends.ObjectPermissionBackend',
         'django.contrib.auth.backends.ModelBackend',
 )
-
 
 ANONYMOUS_USER_ID = -1
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
