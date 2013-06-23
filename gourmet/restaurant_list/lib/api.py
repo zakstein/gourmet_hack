@@ -43,7 +43,7 @@ class MatchAPI:
             # Remove parens
             name = re.sub('\(.*\)', '', name)
             self.name = name.lower()
-            print self.name
+            print self.name.encode('utf-8')
             self.location = re.sub('\(.*\)', '', location)
             print self.location
             self.url_params = {'term': self.name, 'location': self.location, 'limit': self.MAX_RESULTS, 'category_filter': self.CATEGORIES}

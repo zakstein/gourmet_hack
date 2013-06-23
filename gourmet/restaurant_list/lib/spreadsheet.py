@@ -45,7 +45,10 @@ class Spreadsheet(object):
                 row.parse_row()
                 row_results.append(row)
             except RequiredColumnNotFound:
-                pass
+                print "Required column not found"
+            except ValueError:
+                print "Error saving values"
+
 
         return row_results
 

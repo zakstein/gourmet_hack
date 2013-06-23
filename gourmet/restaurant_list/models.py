@@ -53,7 +53,7 @@ def restaurant_list_for_user(user):
 class RestaurantListElement(models.Model):
     restaurantList = models.ForeignKey('RestaurantList')
     restaurant = models.ForeignKey('Restaurant', null=True)
-    rating = models.PositiveIntegerField()
+    rating = models.PositiveIntegerField(default=0)
     has_been = models.BooleanField()
     notes = models.TextField()
 
@@ -125,17 +125,21 @@ class RestaurantListElement(models.Model):
                 state=api.top_match['address']['state_code'],
                 country=api.top_match['address']['country_code'],
                 zip_code=api.top_match['address']['postal_code'],
-                neighborhood=api.top_match['address']['neighborhoods'][0],
                 geo_coordinate=json.dumps(api.top_match['address']['coordinate']),
             )
+
+            if 'neighborhoods' in api.top_match['address']:
+                setattr(restaurant, 'neighborhood', api.top_match['address']['neighborhoods'][0])
 
             restaurant.save()
 
             return restaurant
 
     def set_fields(self, fields):
+        print fields
         for name, value in fields.items():
-            setattr(self, name, value)
+            if value:
+                setattr(self, name, value)
 
     def _get_address_including_city(self, info):
         if 'city' in info:
