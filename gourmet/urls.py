@@ -20,4 +20,5 @@ urlpatterns = patterns('',
 	url(r'^about_us/', TemplateView.as_view(template_name='about_us.html')),
     url(r'^list/$', 'restaurant_list.views.display_restaurant_list'),
     url(r'^upload/$', 'restaurant_list.views.upload_restaurant_list_from_file'),
+	url(r'^styleguide/', TemplateView.as_view(template_name='styleguide.html')),
 	)

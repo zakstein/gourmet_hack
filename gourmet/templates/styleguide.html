@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block header %}
+	{% block title %}Style guide{% endblock %}
+{% endblock %}
+{% block content %}
+<div class="container">
+		<h3>Icons</h3>
+		<i class="icon-search"></i>
+		<i class="icon-heart"></i>
+		<i class="icon-chevron-right"></i>
+		<br/><br/>
+		<span class="label label-success">Green label</span>
+		<span class="badge badge-success">Green badge</span>
+		<h3>Buttons</h3>
+		<button type="submit" class="btn btn-primary">Submit</button>
+		<button type="submit" class="btn btn-primary btn-small">Submit</button>
+		<button type="submit" class="btn btn-primary btn-mini">Submit</button>
+		<br/><br/>
+		<div class="btn-group">
+			<a class="btn btn-primary" href="#">Menu</a>
+			<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+			<ul class="dropdown-menu">
+				<li><a href="#">Item one</a></li>
+				<li><a href="#">Item two</a></li>
+				<li><a href="#"><i class="icon-ban-circle"></i>Item three</a></li>
+				<li class="divier"></li>
+				<li><a href="#">Sign out</a></li>
+			</ul>
+		</div>
+
+		<br/><br/>
+		<button type="submit" class="btn">Cancel</button>
+		<button type="submit" class="btn btn-small">Cancel</button>
+		<button type="submit" class="btn btn-mini">Cancel</button>
+		<br/><br/>
+		<button type="submit" class="btn disabled">Cancel</button>
+		<button type="submit" class="btn btn-small disabled">Cancel</button>
+		<button type="submit" class="btn btn-mini disabled">Cancel</button>
+		<br/><br/>
+		<button type="submit" class="btn btn-link">Button link</button>
+
+		<h3>Alerts</h3>
+		<!-- NOTE: when using the x close button, please always us an a, it's required by iOS devices --!>
+			<div class="alert"><a class="close" href="#"  data-dismiss="alert">&times;</a>
+				<strong>Beware!</strong> This is a warning!
+			</div>
+			<div class="alert alert-success">Your list was successfully imported!</div>
+		<!-- TODO: Add a <a> for linking error text --!>
+			<div class="alert alert-error">We were unable to import <a href="#" ><strong>3 items</strong></a> on your list</div>
+			<strong>Progress bar</strong>
+		<div class="progress progress-striped active">
+			<div class="bar" style="width:40%"></div>
+		</div>
+
+		<h3>Form fields</h3>
+			<form>
+				<fieldset>
+					<!-- TODO: Make selected state of input box not glow bluei
+					           Make placeholder text lighter when clicked (or disappear) --!>
+					<label>Basic input</label>
+					<input type="text" placeholder="Placeholder text"/>
+					<!-- TODO: Make help-block clas gray by default --!>
+					<span class="help-block">Helpful text about this field</span>
+
+					<!-- TODO: Decie if we want this type of behavior --!>
+					<label>Validated field</label>
+					<input type="email" placeholder="test@test.com"/>
+
+					<label>Text area</label>
+					<textarea rows="3" ></textarea>		
+					<label class="radio">
+						<input type="radio" name="options" id="option1" value="option1" checked>
+						Default item
+					</label>
+					<label class="radio">
+						<input type="radio" name="options" id="option2" value="option2">
+						Second item
+					</label>
+					<label class="checkbox">
+						<input type="checkbox"> Select this item
+					</label>
+
+					<select>
+						<option>Best</option>
+						<option>Second best</option>
+						<option>Third best</option>
+						<option>Fourth best</option>
+					</select>
+					<!-- TODO: If we use this, make the field smaller --!>
+					<label>Your rating</label>
+					<div class="input-append">
+						<input class="span1" id="appendInput" type="text" placeholder="rating">
+						<span class="add-on">/100</span>
+					</div>	
+				</fieldset>
+			</form>
+
+
+
+
+		<h3>Tables</h3>
+		<table class="table table-hover">
+			<thead>
+				<th><strong>Rank</strong></th>
+				<th><strong>Name</strong></th>
+				<th><strong>Rating</strong></th>
+				<th><strong>Notes</strong></th>
+				<th><strong>Address</strong</th>
+				</thead>
+			<tr>
+				<td>1</td>
+				<td><a href="#">Spruce</a></td>
+				<td>98/100</td>
+				<td>Love this palce</td>
+				<td>3155 Spruce St, SF, CA 94122</td>
+			</tr>
+			<tr>
+				<td>2</td>
+				<td><a href="#">Gary Danko</a></td>
+				<td>95/100</td>
+				<td>Classic American grub</td>
+				<td> 225 North Point, San Francisco, CA 94123</td>
+			</tr>
+		</table>
+	</div>
+{% endblock %}
