@@ -4,6 +4,7 @@ import urllib2
 import urllib
 import urlparse
 import difflib
+import re
 
 
 # Usage:
@@ -39,9 +40,13 @@ class MatchAPI:
         TOKEN_SECRET = "NIJ2I1e2Wmqy0lOaRJhIC-vj4E0"
 
         def __init__(self, name, location):
-                        self.name = name
-                        self.location = location
-                        self.url_params = {'term': self.name, 'location': self.location, 'limit': self.MAX_RESULTS, 'category_filter': self.CATEGORIES}
+            # Remove parens
+            name = re.sub('\(.*\)', '', name)
+            self.name = name.lower()
+            print self.name
+            self.location = re.sub('\(.*\)', '', location)
+            print self.location
+            self.url_params = {'term': self.name, 'location': self.location, 'limit': self.MAX_RESULTS, 'category_filter': self.CATEGORIES}
 
         def request(self):
 
@@ -64,10 +69,10 @@ class MatchAPI:
                 token = oauth2.Token(self.TOKEN, self.TOKEN_SECRET)
                 oauth_request.sign_request(oauth2.SignatureMethod_HMAC_SHA1(), consumer, token)
                 signed_url = self.to_url(oauth_request)
+                print signed_url
 
                 # Connect
                 try:
-                    print signed_url
                     conn = urllib2.urlopen(signed_url, None)
                     try:
                         response = json.loads(conn.read())
@@ -78,16 +83,17 @@ class MatchAPI:
                 return response
 
         def top_match_confidence_check(self):
-                matcher = difflib.SequenceMatcher(None, self.name, self.top_match['name'])
-                ratio = matcher.ratio();
+                full_name_matcher = difflib.SequenceMatcher(None, self.name, self.top_match['name'].lower())
+                ratio = full_name_matcher.ratio();
                 self.match_confidence = ratio > .75
 
         def parse_response(self, response):
-                businesses = []
-                for business in response['businesses']:
-                                businesses.append({'name': business['name'], 'address': business['location'], 'url': business['url']})
-                self.top_match = businesses[0]
-                self.alt_matches = businesses[1:]
+            businesses = []
+            for business in response['businesses']:
+                businesses.append({'name': business['name'], 'address': business['location'], 'url': business['url']})
+            self.top_match = businesses[0]
+            self.alt_matches = businesses[1:]
+
 
         def execute(self):
                 if self.name is "" or self.location is "":
@@ -102,6 +108,7 @@ class MatchAPI:
                                 return
                 self.parse_response(response)
                 self.top_match_confidence_check()
+                print self.top_match
 
         def to_url(self, oauth_request):
             """
@@ -137,8 +144,8 @@ class MatchAPI:
 
 
 def main():
-        name = "tia pol"
-        location = "New York"
+        name = "AQ"
+        location = "1085 Mission, San Francisco"
         restaurant = MatchAPI(name,location)
         restaurant.execute()
         print restaurant.top_match

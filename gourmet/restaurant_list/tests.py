@@ -40,8 +40,8 @@ class RestaurantListTest(TestCase):
     def test_update_restaurant_list_with_file_data_works(self):
         restaurant_list = RestaurantList(owner=self.user)
         restaurant_list.save()
-        #rows = restaurant_list.update_restaurant_list_with_file_data(xlrd.open_workbook('restaurant_list/sophia_test_data.xlsx', encoding_override='utf-8'))
-        #self.assertEqual(250, len(rows))
+        rows = restaurant_list.update_restaurant_list_with_file_data(xlrd.open_workbook('restaurant_list/sophia_test_data.xlsx', encoding_override='utf-8'))
+        self.assertEqual(250, len(rows))
 
 class SpreadsheetTest(TestCase):
     def setUp(self):
@@ -101,6 +101,11 @@ class RestaurantListElementTest(TestCase):
             self.book.sheet_by_index(0).row(1),
             self.sheet.header_to_column_index_map
         )
+
+    def test_get_address_including_city_and_self(self):
+        info = {'address': '108 Mission ', 'city': 'San Francisco'}
+        element = RestaurantListElement();
+        self.assertEqual('108 Mission, San Francisco', element._get_address_including_city(info))
 
 
 class SpreadsheetRowTest(TestCase):

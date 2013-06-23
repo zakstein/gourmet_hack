@@ -33,6 +33,8 @@ class RestaurantList(models.Model):
         """
         required_headers = ['restaurant', 'address']
         spreadsheet = Spreadsheet(self, file_book, required_headers)
+        print 'Got spreadsheet!'
+        print spreadsheet
         return spreadsheet.parse(RestaurantListElement)
 
 def restaurant_list_for_user(user):
@@ -137,7 +139,7 @@ class RestaurantListElement(models.Model):
 
     def _get_address_including_city(self, info):
         if 'city' in info:
-            return '{} {}'.format(info['address'], info['city'])
+            return '{}, {}'.format(info['address'].strip(), info['city'])
 
         return info['address']
 

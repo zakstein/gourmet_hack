@@ -31,19 +31,20 @@ class Spreadsheet(object):
 
         row_results = []
 
+        print sheet.nrows
+        print sheet.row(1)
+        print list_element_model
         for i in range(1, min(self.MAX_SPREADSHEET_ROW_COUNT, sheet.nrows)):
             try:
+                print "Trying row " + str(i)
                 row = SpreadsheetRow(
                     sheet.row(i),
                     list_element_model,
-                    self.header_to_column_index_map,
-                    self.required_headers,
-                    self.list_model_instance,
+                    self
                 )
                 row.parse_row()
                 row_results.append(row)
             except RequiredColumnNotFound:
-                print "not found!"
                 pass
 
         return row_results

@@ -1,0 +1,12 @@
+<div class="module" data-module='list_uploader'>
+	<form action="/upload/" method="POST" class="uploader_form form-horizontal">
+		{% csrf_token %}
+		<div class="control-group">
+			<label class="control-label">Upload your restaurant list</label>
+			<div class="controls">
+			<input type="file" name="input_spreadsheet" class="spreadsheet-file-name" />
+			</div>
+		</div>
+		<input type="submit" class="btn btn-primary" value="Upload!" />
+	</form>
+</div>

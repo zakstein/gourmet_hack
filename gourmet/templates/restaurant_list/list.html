@@ -1,0 +1,14 @@
+<p>THIS IS A LIST</p>
+<ul class="restaurant-list">
+	{% for restaurant_element in restaurant_list %}
+		<h5>{{ restaurant_element.restaurant.name }}</h5>
+		<h6>{{ restaurant_element.restaurant.full_address }}</h6>
+		<p>
+		<ul class="inline {% if restaurant_element.has_been %}has-been{% endif %}">
+			<li>{{ restaurant_element.rating}}</li>
+			<li>{{ restaurant_element.has_been }}</li>
+			<li>{{ restaurant_element.notes }} </li>
+		</ul>
+		</p>
+	{% endfor %}
+</ul>
