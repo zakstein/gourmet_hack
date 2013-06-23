@@ -52,7 +52,7 @@ def restaurant_list_for_user(user):
 
 class RestaurantListElement(models.Model):
     restaurantList = models.ForeignKey('RestaurantList')
-    restaurant = models.ForeignKey('Restaurant')
+    restaurant = models.ForeignKey('Restaurant', null=True)
     rating = models.PositiveIntegerField()
     has_been = models.BooleanField()
     notes = models.TextField()
