@@ -42,6 +42,8 @@ class SpreadsheetRow(object):
                 self.header_to_column_index_map[idx].lower(),
                 required_columns_count
             )
+        print self.required_columns
+        print required_columns_count
         for required_column, count in required_columns_count.items():
             if count != 1:
                 return False

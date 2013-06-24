@@ -44,6 +44,8 @@ class Spreadsheet(object):
                 )
                 row.parse_row()
                 row_results.append(row)
+                if i > 3:
+                    break
             except RequiredColumnNotFound:
                 print "Required column not found"
             except ValueError:

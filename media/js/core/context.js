@@ -1,4 +1,4 @@
-Context = function(application, moduleName, moduleId) {
+var Context = function(application, moduleName, moduleId) {
 	'use strict';
 
 	this.broadcast = function(name, data) {

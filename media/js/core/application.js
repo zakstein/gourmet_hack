@@ -36,7 +36,7 @@ window.Application = (function() {
 		return instances[element.id];
 	}
 
-	function initModuleInstance(moduleName, moduleElement) {
+	function initModuleInstance(moduleName, moduleElement, application) {
 		var moduleData = modules[moduleName],
 			module,
 			instance,
@@ -45,7 +45,7 @@ window.Application = (function() {
 		moduleElement.id = 'mod-' + moduleName + '-' + moduleData.counter;
 		moduleData.counter++;
 
-		context = new Context(this, moduleName, moduleElement.id);
+		context = new Context(application, moduleName, moduleElement.id);
 
 		module = moduleData.creator(context);
 
@@ -103,7 +103,7 @@ window.Application = (function() {
 			var moduleName = getModuleName(element);
 
 			if (!this.isStarted(element)) {
-				initModuleInstance(moduleName, element);
+				initModuleInstance(moduleName, element, this);
 			}
 		},
 
@@ -147,7 +147,7 @@ window.Application = (function() {
 		addModule: function(moduleName, creatorFunction) {
 			modules[moduleName] = {
 				creator: creatorFunction,
-				counter: 1,
+				counter: 1
 			};
 		},
 
@@ -162,10 +162,10 @@ window.Application = (function() {
 					instanceData;
 			for (var id in instances) {
 				instanceData = instances[id];
-				notificationsAcceptedByModule = instanceData.instance.notifications || [];
+				notificationsAcceptedByModule = instanceData.module.notifications || [];
 
 				if ($.inArray(notificationName, notificationsAcceptedByModule) != -1) {
-					callModuleMethod(instanceData.instance, 'onnotification', notificationName, notificationData);
+					callModuleMethod(instanceData.module, 'onnotification', notificationName, notificationData);
 				}
 
 			}

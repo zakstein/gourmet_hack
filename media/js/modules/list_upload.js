@@ -1,6 +1,15 @@
 Application.addModule('list_uploader', function(context) {
 
 	var uploadNotification = 'upload_notification';
+	var uploadFormElementSelector = '.uploader_form';
+
+	function showLoadingStatus() {
+		context.getElement().find('.upload-in-progress').show();
+	}
+
+	function hideLoadingStatus() {
+		context.getElement().find('.upload-in-progress').hide();
+	}
 
 	function beforeListUpload(formData, $form, options) {
 		console.log($form.find('input[type=file]').val());
@@ -10,6 +19,7 @@ Application.addModule('list_uploader', function(context) {
 			return false;
 		}
 
+		showLoadingStatus();
 		return true;
 	}
 
@@ -21,16 +31,17 @@ Application.addModule('list_uploader', function(context) {
 	function listUploadSuccess(responseText, statusText, xhr, $form) {
 		console.log(responseText, statusText, xhr, $form);
 		context.broadcast(uploadNotification, {});
+		hideLoadingStatus();
 	}
 
 	return {
 		notifications: [],
 
 		init: function() {
-			context.getElement().find('.uploader_form').ajaxForm({
+			context.getElement().find(uploadFormElementSelector).ajaxForm({
 				beforeSubmit: beforeListUpload,
 				error: listUploadError,
-				success: listUploadSuccess,
+				success: listUploadSuccess
 			});
 		}
 	}

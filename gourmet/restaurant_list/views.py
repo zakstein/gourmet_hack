@@ -1,4 +1,5 @@
 import xlrd
+import json
 from lib.shortcuts import render_to_response
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
@@ -25,15 +26,35 @@ def upload_restaurant_list_from_file(request):
 
     return {'result': 'failure'}
 
+def _get_restaurant_list_for_user(user):
+    restaurant_elements = restaurant_list_for_user(user).restaurantlistelement_set.all()
+    for restaurant_element in restaurant_elements:
+        restaurant_element.raw_upload_info  = json.loads(restaurant_element.raw_upload_info)
+        print restaurant_element.raw_upload_info
+
+    return restaurant_elements
+
 @login_required
-def display_restaurant_list(request):
+def display_restaurant_list_and_upload(request):
     user = request.user
 
-    restaurant_elements = restaurant_list_for_user(user).restaurantlistelement_set.all()
+    restaurant_elements = _get_restaurant_list_for_user(user)
 
     return render_to_response(
         request,
         'restaurant_list/list_and_upload.html',
         {'restaurant_list': restaurant_elements},
+    )
+
+@login_required
+def display_restaurant_list(request):
+    user = request.user
+
+    restaurant_elements = _get_restaurant_list_for_user(user)
+
+    return render_to_response(
+        request,
+        'restaurant_list/list.html',
+            {'restaurant_list': restaurant_elements},
     )
 

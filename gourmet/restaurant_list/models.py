@@ -1,4 +1,5 @@
 import json
+
 from django.db import models
 from lib.api import MatchAPI
 from lib.spreadsheet import Spreadsheet
@@ -31,7 +32,7 @@ class RestaurantList(models.Model):
         """
         Takes in a xlrd work_book and populates the database
         """
-        required_headers = ['restaurant', 'address']
+        required_headers = ['restaurant', 'city']
         spreadsheet = Spreadsheet(self, file_book, required_headers)
         print 'Got spreadsheet!'
         print spreadsheet
@@ -53,9 +54,11 @@ def restaurant_list_for_user(user):
 class RestaurantListElement(models.Model):
     restaurantList = models.ForeignKey('RestaurantList')
     restaurant = models.ForeignKey('Restaurant', null=True)
-    rating = models.PositiveIntegerField(default=0)
+    rating = models.IntegerField(default=-1)
     has_been = models.BooleanField()
     notes = models.TextField()
+    # This field contains all info that is uploaded for later use
+    raw_upload_info = models.TextField(default='')
 
     def set_all_fields_from_spreadsheet_row_and_save(self, row, header_column_map):
         """
@@ -68,7 +71,7 @@ class RestaurantListElement(models.Model):
 
         self.set_fields(self_fields)
 
-        if not restaurant_info['address']:
+        if not restaurant_info['city']:
             raise RequiredColumnNotFound('Address is a required field')
 
         api = MatchAPI(name=restaurant_info['name'], location=self._get_address_including_city(restaurant_info))
@@ -79,7 +82,12 @@ class RestaurantListElement(models.Model):
         else:
             unclassified_info = dict(restaurant_info.items() + unclassified_info.items())
 
+        setattr(self, 'raw_upload_info', json.dumps(unclassified_info))
+
         self.save()
+
+        if not api.match_confidence:
+            print self.raw_upload_info
 
         return unclassified_info
 
@@ -118,14 +126,22 @@ class RestaurantListElement(models.Model):
                 city=api.top_match['address']['city']
             )
         except ObjectDoesNotExist:
+            full_address = "%s, %s, %s %s" % (
+                api.top_match['address']['address'][0],
+                api.top_match['address']['city'],
+                api.top_match['address']['state_code'],
+                api.top_match['address']['postal_code']
+            )
             restaurant = Restaurant(
                 name=api.top_match['name'],
+                full_address=full_address,
                 address=api.top_match['address']['address'][0],
                 city=api.top_match['address']['city'],
                 state=api.top_match['address']['state_code'],
                 country=api.top_match['address']['country_code'],
                 zip_code=api.top_match['address']['postal_code'],
                 geo_coordinate=json.dumps(api.top_match['address']['coordinate']),
+                url=api.top_match['url'],
             )
 
             if 'neighborhoods' in api.top_match['address']:
@@ -133,19 +149,19 @@ class RestaurantListElement(models.Model):
 
             restaurant.save()
 
-            return restaurant
+        return restaurant
 
     def set_fields(self, fields):
-        print fields
         for name, value in fields.items():
             if value:
                 setattr(self, name, value)
 
     def _get_address_including_city(self, info):
-        if 'city' in info:
-            return '{}, {}'.format(info['address'].strip(), info['city'])
+        address = info['city']
+        if 'address' in info:
+            address = '{}, {}'.format(info['address'].strip(), info['city'])
 
-        return info['address']
+        return address
 
     def set_list(self, list_model_instance):
         self.restaurantList = list_model_instance

@@ -69,7 +69,6 @@ class MatchAPI:
                 token = oauth2.Token(self.TOKEN, self.TOKEN_SECRET)
                 oauth_request.sign_request(oauth2.SignatureMethod_HMAC_SHA1(), consumer, token)
                 signed_url = self.to_url(oauth_request)
-                print signed_url
 
                 # Connect
                 try:
@@ -108,7 +107,6 @@ class MatchAPI:
                                 return
                 self.parse_response(response)
                 self.top_match_confidence_check()
-                print self.top_match
 
         def to_url(self, oauth_request):
             """
