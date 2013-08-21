@@ -1,7 +1,8 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils import simplejson
 from django.core.mail import mail_admins
 from django.utils.translation import ugettext as _
+from lib.authorization_check import Authorization_Check
 import sys
 
 
@@ -44,3 +45,23 @@ def json_view(func):
 		json = simplejson.dumps(response)
 		return HttpResponse(json, mimetype='application/json')
 	return wrap
+
+def authorization_required(authorization_type):
+
+    def decorator(func):
+        user_to_display = None
+        def wrap(request, *args, **kwargs):
+            if 'user' in kwargs:
+                user_to_display = kwargs['user']
+            else:
+                user_to_display = request.user
+
+            auth_check = Authorization_Check(authorization_type)
+            if not auth_check.is_authorized(request.user, user_to_display):
+                return HttpResponseRedirect('/')
+
+            return func(request, *args, **kwargs)
+
+        return wrap
+    return decorator
+

@@ -4,15 +4,15 @@ from lib.shortcuts import render_to_response
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from forms import UploadRestaurantFileForm
-from models import restaurant_list_for_user
-from decorators import json_view
+from models import restaurant_list_for_user, RestaurantListElement
+from decorators import json_view,authorization_required
+from lib.authorization_check import Authorization_Check, DELETE_ACTION, VIEW_ACTION, EDIT_ACTION
 
 @require_POST
 @login_required
 @json_view
 def upload_restaurant_list_from_file(request):
     form = UploadRestaurantFileForm(request.POST, request.FILES)
-    print form.is_valid()
     if form.is_valid():
         input_excel = request.FILES['input_spreadsheet']
         book = xlrd.open_workbook(file_contents=input_excel.read())
@@ -34,27 +34,65 @@ def _get_restaurant_list_for_user(user):
 
     return restaurant_elements
 
-@login_required
-def display_restaurant_list_and_upload(request):
-    user = request.user
-
-    restaurant_elements = _get_restaurant_list_for_user(user)
-
+def _render_restaurant_list_response_with_template(request, template_name, restaurant_elements, user_to_display):
     return render_to_response(
+        request,
+        template_name,
+            {
+            'restaurant_list': restaurant_elements,
+            'can_edit_and_delete_rows': Authorization_Check(EDIT_ACTION).is_authorized(request.user, user_to_display),
+            },
+    )
+
+@login_required
+@authorization_required(VIEW_ACTION)
+def display_restaurant_list_and_upload_for_user(request, user_to_display):
+    user = request.user
+    if not user_to_display:
+        user_to_display = user
+
+    restaurant_elements = _get_restaurant_list_for_user(user_to_display)
+
+    return _render_restaurant_list_response_with_template(
         request,
         'restaurant_list/list_and_upload.html',
-        {'restaurant_list': restaurant_elements},
+        restaurant_elements,
+        user_to_display
+        )
+
+
+def display_restaurant_list_and_upload_for_current_user(request):
+    return display_restaurant_list_and_upload_for_user(request, request.user)
+
+@login_required
+@authorization_required(VIEW_ACTION)
+def display_restaurant_list_for_user(request, user_to_display):
+    user = request.user
+    if not user_to_display:
+        user_to_display = user
+
+    restaurant_elements = _get_restaurant_list_for_user(user_to_display)
+
+    return _render_restaurant_list_response_with_template(
+        request,
+        'restaurant_list/list.html',
+        restaurant_elements,
+        user_to_display
     )
 
 @login_required
-def display_restaurant_list(request):
-    user = request.user
-
-    restaurant_elements = _get_restaurant_list_for_user(user)
-
+def show_restaurant_search(request, restaurant_list_element_id):
+    restaurant_list_element = None
+    if restaurant_list_element_id:
+        restaurant_list_element = RestaurantListElement.objects.get(pk=restaurant_list_element_id)
     return render_to_response(
         request,
-        'restaurant_list/list.html',
-            {'restaurant_list': restaurant_elements},
+        'restaurant_list/search.html',
+        {
+            'restaurant_list_element': restaurant_list_element,
+        }
     )
 
+@login_required
+def restaurant_search(request, query, restaurant_list_element_id):
+    pass

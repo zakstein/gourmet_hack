@@ -18,8 +18,19 @@ urlpatterns = patterns('',
     url(r'^accounts/', include('userena.urls')),
 	url(r'^/?$', TemplateView.as_view(template_name='home.html')),
 	url(r'^about_us/', TemplateView.as_view(template_name='about_us.html')),
-    url(r'^list/$', 'restaurant_list.views.display_restaurant_list_and_upload'),
-    url(r'^restaurant_list/$', 'restaurant_list.views.display_restaurant_list'),
+
+    url(r'^list/$', 'restaurant_list.views.display_restaurant_list_and_upload_for_current_user'),
+    url(r'^list/(?P<user_to_display>\d+)$', 'restaurant_list.views.display_restaurant_list_and_upload_for_user'),
+
+    url(r'^restaurant_list/$', 'restaurant_list.views.display_restaurant_list_for_user'),
+    url(r'^restaurant_list/(?P<user_to_display>\d+)$', 'restaurant_list.views.display_restaurant_list_for_user'),
+
+    url(r'^show_restaurant_search/$', 'restaurant_list.views.show_restaurant_search'),
+    url(r'^show_restaurant_search/(?P<restaurant_list_element_id>\d+)$', 'restaurant_list.views.show_restaurant_search'),
+
+    url(r'^restaurant_search/(?P<query>\d+)/$', 'restaurant_list.views.restaurant_search'),
+    url(r'^restaurant_search/(?P<query>\d+)/(?P<restaurant_list_element_id>\d+)$', 'restaurant_list.views.restaurant_search'),
+
     url(r'^upload/$', 'restaurant_list.views.upload_restaurant_list_from_file'),
 	url(r'^styleguide/', TemplateView.as_view(template_name='styleguide.html')),
 )

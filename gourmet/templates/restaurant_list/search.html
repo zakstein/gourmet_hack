@@ -1,0 +1,11 @@
+<div class="search_widget">
+	<form class="search_widget_form form-inline">
+		<input class="search_query" type="text" name="query" value="" placeholder="Name" />
+		<input class="search_location" type="text" name="location" value="" placeholder="Location"/>
+		<button type="submit" class="btn">Search</button>
+		{% if restaurant_list_element %}
+			<input type="hidden" name="restaurant_list_element_id" value="{{ restaurant_list_element.id }}" />
+		{% endif %}
+	</form>
+	<div class="search_results" style="display:none;"></div>
+</div>

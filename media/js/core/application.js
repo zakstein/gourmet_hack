@@ -4,6 +4,7 @@ window.Application = (function() {
 	var debug,
 		modules = {}, // Information about modules by moduleName
 		services = {}, // Information about services by serviceName
+		widgets = {}, // Information about widgets by widgetName
 		instances = {};
 
 	function getModuleName(element) {
@@ -61,6 +62,13 @@ window.Application = (function() {
 
 		callModuleMethod(instance.module, 'init');
 		if (debug) log(moduleName + ' init()');
+	}
+
+	function getWidget(widgetName, application) {
+		var widgetData = widgets[widgetName],
+				widget;
+
+		return widgetData.creator(application);
 	}
 
 	return {
@@ -149,6 +157,17 @@ window.Application = (function() {
 				creator: creatorFunction,
 				counter: 1
 			};
+		},
+
+		addWidget: function(widgetName, creatorFunction) {
+			widgets[widgetName] = {
+				creator: creatorFunction,
+				counter: 1
+			};
+		},
+
+		getWidget: function(widgetName) {
+			return getWidget(widgetName, this);
 		},
 
 		/**

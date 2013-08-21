@@ -12,4 +12,10 @@ var Context = function(application, moduleName, moduleId) {
 	this.getElement = function() {
 		return $('#' + moduleId);
 	}
+
+	this.log = function() {
+		if (window.console && window.console.log) {
+			console.log.apply(console, arguments);
+		}
+	}
 };

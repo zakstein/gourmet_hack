@@ -12,7 +12,7 @@ Application.addModule('list_uploader', function(context) {
 	}
 
 	function beforeListUpload(formData, $form, options) {
-		console.log($form.find('input[type=file]').val());
+		context.log($form.find('input[type=file]').val());
 		var alertString = 'Please select a file to be submitted!';
 		if (!$form.find('input[type=file]').val()) {
 			alert(alertString);
@@ -24,12 +24,12 @@ Application.addModule('list_uploader', function(context) {
 	}
 
 	function listUploadError(responseText, statusText, xhr, $form) {
-		console.log(responseText, statusText, xhr, $form);
+		context.log(responseText, statusText, xhr, $form);
 		alert('Could not upload your file. Status was ' + statusText + ' ' + xhr + '. Please retry your upload.');
 	}
 
 	function listUploadSuccess(responseText, statusText, xhr, $form) {
-		console.log(responseText, statusText, xhr, $form);
+		context.log(responseText, statusText, xhr, $form);
 		context.broadcast(uploadNotification, {});
 		hideLoadingStatus();
 	}
