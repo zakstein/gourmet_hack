@@ -2,6 +2,9 @@
 {% block content %}
 	{% include "restaurant_list/list_upload.html" %}
 	{% include "restaurant_list/list.html" %}
+    {% if can_edit_rows %}
+        {% include "restaurant_list/add_restaurant.html" %}
+    {% endif %}
 {% endblock %}
 {% block javascript_includes %}
 <script src="/js/modules/list_upload.js"></script>

@@ -40,7 +40,7 @@ def _render_restaurant_list_response_with_template(request, template_name, resta
         template_name,
             {
             'restaurant_list': restaurant_elements,
-            'can_edit_and_delete_rows': Authorization_Check(EDIT_ACTION).is_authorized(request.user, user_to_display),
+            'can_edit_rows': Authorization_Check(EDIT_ACTION).is_authorized(request.user, user_to_display),
             },
     )
 
@@ -55,7 +55,7 @@ def display_restaurant_list_and_upload_for_user(request, user_to_display):
 
     return _render_restaurant_list_response_with_template(
         request,
-        'restaurant_list/list_and_upload.html',
+        'restaurant_list/list_page.html',
         restaurant_elements,
         user_to_display
         )

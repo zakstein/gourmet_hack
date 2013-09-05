@@ -127,7 +127,6 @@ INSTALLED_APPS = (
     'guardian',
     'easy_thumbnails',
     'south',
-	'jinja2',
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
     'restaurant_list',
@@ -168,8 +167,11 @@ AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 
 USERENA_WITHOUT_USERNAMES = True
 
+LOGIN_URL = '/accounts/signin/'
+LOGOUT_URL = '/accounts/signout/'
+
 USERENA_SIGNIN_REDIRECT_URL = '/'
-USERENA_REDIRECT_ON_SIGNOUT = '/signout/'
+USERENA_REDIRECT_ON_SIGNOUT = '/'
 
 USERENA_ACTIVATION_REQUIRED = False
 USERENA_SIGNIN_AFTER_SIGNUP = True
