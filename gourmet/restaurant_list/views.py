@@ -2,11 +2,19 @@ import xlrd
 import json
 from lib.shortcuts import render_to_response
 from django.views.decorators.http import require_POST
+from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
 from forms import UploadRestaurantFileForm
 from models import restaurant_list_for_user, RestaurantListElement
 from decorators import json_view,authorization_required
 from lib.authorization_check import Authorization_Check, DELETE_ACTION, VIEW_ACTION, EDIT_ACTION
+
+def display_home_page(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/list/')
+    else:
+        return render(request, 'home.html', content_type="text/html")
 
 @require_POST
 @login_required
