@@ -6,6 +6,7 @@
   <title>{% block title %}{% endblock %}</title>
   {% block meta %}{% endblock %}
 <link rel="stylesheet" type ="text/css" href="/css/bootstrap.css">
+<link rel="stylesheet" type ="text/css" href="/css/autocomplete.css">
 </head>
 {% block styles %}
 {% endblock %}
@@ -30,7 +31,7 @@
 	{% block javascript_includes %}
 	{% endblock %}
 	<script>
-		Application.init();
+		Application.init({debug: true});
 	</script>
 </body>
 </html>

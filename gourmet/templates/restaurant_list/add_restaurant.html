@@ -1,5 +1,8 @@
 <form class="form-inline" data-module="restaurant_adder">
-    <input type="text" placeholder="Restaurant name" /> near <input type="text" value="San Francisco" />
+    <span class="restaurant-search module" data-module="restaurant_search">
+        <input name="restaurant_name" class="searchTerm" type="text" placeholder="Restaurant name" /> near <input name="location" class="searchLocation" type="text" value="San Francisco" />
+        <input type="hidden" value="" name="restaurant_id" class="searchTermRestaurantId" />
+    </span>
     <label class="checkbox"><input type="checkbox" id="has_been" /> Been</label>
     <input type="text" class="input-mini" placeholder="Rating" />
     <textarea placeholder="Notes" rows="1"></textarea>

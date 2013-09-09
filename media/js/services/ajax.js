@@ -5,6 +5,11 @@ Application.addService('ajax', function(application) {
 		getHtmlFromServer: function(url, data, callback) {
 			// For now, just wrap jQuery
 			$.get(url, data, callback, 'html');
+		},
+
+		getJSONFromServer: function(url, data, callback) {
+			// For now, just wrap jQuery
+			$.get(url, data, callback, 'json');
 		}
 	};
 });

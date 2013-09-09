@@ -5,7 +5,8 @@ window.Application = (function() {
 		modules = {}, // Information about modules by moduleName
 		services = {}, // Information about services by serviceName
 		widgets = {}, // Information about widgets by widgetName
-		instances = {};
+		instances = {}, // Module instances that have been instantiated
+		eventTypes = ['click', 'mouseout', 'mouseover', 'focus', 'blur']; // Event types used for event listeners
 
 	function getModuleName(element) {
 		var moduleDeclaration = $(element).data('module');
@@ -58,6 +59,8 @@ window.Application = (function() {
 			eventHandlers: {}
 		};
 
+		bindEventListeners(instance);
+
 		instances[moduleElement.id] = instance;
 
 		callModuleMethod(instance.module, 'init');
@@ -69,6 +72,23 @@ window.Application = (function() {
 				widget;
 
 		return widgetData.creator(application);
+	}
+
+	function bindEventListeners(instanceData) {
+		var eventType,
+			eventHandlerName,
+			moduleInstance = instanceData.module,
+			moduleElement = instanceData.element;
+
+		for (var i in eventTypes) {
+			eventType = eventTypes[i];
+
+			eventHandlerName = 'on' + eventType;
+
+			if (moduleInstance[eventHandlerName]) {
+				$(moduleElement).on(eventType, moduleINstance[eventHandlerName]);
+			}
+		}
 	}
 
 	return {

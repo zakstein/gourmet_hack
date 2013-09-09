@@ -6,20 +6,22 @@ from models import RestaurantList, RestaurantListElement, restaurant_list_for_us
 import django.http
 from lib.spreadsheet import Spreadsheet
 from lib.spreadsheet_row import SpreadsheetRow
-from lib.api import MatchAPI
+from lib.yelp_api import Yelp_API
 from mock import patch, Mock
 from lib.authorization_check import Authorization_Check, DELETE_ACTION
 from decorators import authorization_required
+from lib.api_search_results import Api_Search_Results
 
 
-class MatchAPITest(TestCase):
+class YelpAPITest(TestCase):
     def setUp(self):
-        self.apimatch = MatchAPI("yelp","san francisco")
+        self.apimatch = Yelp_API()
         self.mock_response = { "businesses": [ { "categories": [ [ "Local Flavor", "localflavor" ], [ "Mass Media", "massmedia" ] ], "display_phone": "+1-415-908-3801", "id": "yelp-san-francisco", "is_claimed": "true", "is_closed": "false", "image_url": "http://s3-media2.ak.yelpcdn.com/bphoto/7DIHu8a0AHhw-BffrDIxPA/ms.jpg", "location": { "address": [ "706 Mission St" ], "city": "San Francisco", "coordinate": { "latitude": 37.786138600000001, "longitude": -122.40262130000001 }, "country_code": "US", "cross_streets": "3rd St & Opera Aly", "display_address": [ "706 Mission St", "(b/t 3rd St & Opera Aly)", "SOMA", "San Francisco, CA 94103" ], "geo_accuracy": 8, "neighborhoods": [ "SOMA" ], "postal_code": "94103", "state_code": "CA" }, "mobile_url": "http://m.yelp.com/biz/4kMBvIEWPxWkWKFN__8SxQ", "name": "Yelp", "phone": "4159083801", "rating_img_url": "http://media1.ak.yelpcdn.com/static/201012161694360749/img/ico/stars/stars_3.png", "rating_img_url_large": "http://media3.ak.yelpcdn.com/static/201012161053250406/img/ico/stars/stars_large_3.png", "rating_img_url_small": "http://media1.ak.yelpcdn.com/static/201012162337205794/img/ico/stars/stars_small_3.png", "review_count": 3347, "snippet_image_url": "http://s3-media2.ak.yelpcdn.com/photo/LjzacUeK_71tm2zPALcj1Q/ms.jpg", "snippet_text": "Sometimes we ask questions without reading an email thoroughly as many of us did for the last event. In honor of Yelp, the many questions they kindly...", "url": "http://www.yelp.com/biz/yelp-san-francisco" } ], "region": { "center": { "latitude": 37.786138600000001, "longitude": -122.40262130000001 }, "span": { "latitude_delta": 0.0, "longitude_delta": 0.0 } }, "total": 10651 }
 
     def test_that_parse_response_handles_the_api_response_properly(self):
-        self.apimatch.parse_response(self.mock_response)
-        parsed_keys = self.apimatch.top_match.keys()
+
+        result = Api_Search_Results(self.apimatch._parse_search_response(self.mock_response), 1, 'yelp')
+        parsed_keys = result.top_match.keys()
         parsed_keys.sort()
         self.assertEqual(parsed_keys,['address','name','url'])
 

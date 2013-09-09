@@ -1,7 +1,7 @@
 import json
 
 from django.db import models
-from lib.api import MatchAPI
+from lib.yelp_api import Yelp_API
 from lib.spreadsheet import Spreadsheet
 from lib.exceptions import RequiredColumnNotFound
 from django.contrib.auth import models as auth_models
@@ -74,11 +74,11 @@ class RestaurantListElement(models.Model):
         if not restaurant_info['city']:
             raise RequiredColumnNotFound('Address is a required field')
 
-        api = MatchAPI(name=restaurant_info['name'], location=self._get_address_including_city(restaurant_info))
-        api.execute()
+        api = Yelp_API()
+        api_search_result = api.search(name=restaurant_info['name'], location=self._get_address_including_city(restaurant_info))
 
-        if api.match_confidence:
-            self.restaurant = self._fetch_restaurant_from_database_or_api(api, restaurant_info)
+        if api_search_result.match_confidence:
+            self.restaurant = self._fetch_restaurant_from_database_or_api(api_search_result, restaurant_info)
         else:
             unclassified_info = dict(restaurant_info.items() + unclassified_info.items())
 
@@ -115,37 +115,37 @@ class RestaurantListElement(models.Model):
                 unclassified_info[cell_name] = cell_value
         return [unclassified_info, restaurant_info, self_fields]
 
-    def _fetch_restaurant_from_database_or_api(self, api, restaurant_info):
+    def _fetch_restaurant_from_database_or_api(self, api_search_result, restaurant_info):
         """
         Attempts to fetch a restaurant from the DB. If that fails, create one
         """
         try:
             restaurant = Restaurant.objects.get(
-                name=api.top_match['name'],
-                address=api.top_match['address']['address'][0],
-                city=api.top_match['address']['city']
+                name=api_search_result.top_match['name'],
+                address=api_search_result.top_match['address']['address'][0],
+                city=api_search_result.top_match['address']['city']
             )
         except ObjectDoesNotExist:
             full_address = "%s, %s, %s %s" % (
-                api.top_match['address']['address'][0],
-                api.top_match['address']['city'],
-                api.top_match['address']['state_code'],
-                api.top_match['address']['postal_code']
+                api_search_result.top_match['address']['address'][0],
+                api_search_result.top_match['address']['city'],
+                api_search_result.top_match['address']['state_code'],
+                api_search_result.top_match['address']['postal_code']
             )
             restaurant = Restaurant(
-                name=api.top_match['name'],
+                name=api_search_result.top_match['name'],
                 full_address=full_address,
-                address=api.top_match['address']['address'][0],
-                city=api.top_match['address']['city'],
-                state=api.top_match['address']['state_code'],
-                country=api.top_match['address']['country_code'],
-                zip_code=api.top_match['address']['postal_code'],
-                geo_coordinate=json.dumps(api.top_match['address']['coordinate']),
-                url=api.top_match['url'],
+                address=api_search_result.top_match['address']['address'][0],
+                city=api_search_result.top_match['address']['city'],
+                state=api_search_result.top_match['address']['state_code'],
+                country=api_search_result.top_match['address']['country_code'],
+                zip_code=api_search_result.top_match['address']['postal_code'],
+                geo_coordinate=json.dumps(api_search_result.top_match['address']['coordinate']),
+                url=api_search_result.top_match['url'],
             )
 
-            if 'neighborhoods' in api.top_match['address']:
-                setattr(restaurant, 'neighborhood', api.top_match['address']['neighborhoods'][0])
+            if 'neighborhoods' in api_search_result.top_match['address']:
+                setattr(restaurant, 'neighborhood', api_search_result.top_match['address']['neighborhoods'][0])
 
             restaurant.save()
 

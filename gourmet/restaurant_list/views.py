@@ -9,6 +9,8 @@ from forms import UploadRestaurantFileForm
 from models import restaurant_list_for_user, RestaurantListElement
 from decorators import json_view,authorization_required
 from lib.authorization_check import Authorization_Check, DELETE_ACTION, VIEW_ACTION, EDIT_ACTION
+from restaurant_list.lib.yelp_api import Yelp_API
+
 
 def display_home_page(request):
     if request.user.is_authenticated():
@@ -102,5 +104,13 @@ def show_restaurant_search(request, restaurant_list_element_id):
     )
 
 @login_required
-def restaurant_search(request, query, restaurant_list_element_id):
-    pass
+@json_view
+def restaurant_search(request):
+    search_term = request.GET.get('term')
+    location = request.GET.get('location')
+
+    yelp_api = Yelp_API()
+    api_result = yelp_api.search(search_term, location)
+
+    return api_result.format_matches_for_display()
+

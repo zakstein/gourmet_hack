@@ -24,8 +24,7 @@ urlpatterns = patterns('',
     url(r'^show_restaurant_search/$', 'restaurant_list.views.show_restaurant_search'),
     url(r'^show_restaurant_search/(?P<restaurant_list_element_id>\d+)$', 'restaurant_list.views.show_restaurant_search'),
 
-    url(r'^restaurant_search/(?P<query>\d+)/$', 'restaurant_list.views.restaurant_search'),
-    url(r'^restaurant_search/(?P<query>\d+)/(?P<restaurant_list_element_id>\d+)$', 'restaurant_list.views.restaurant_search'),
+    url(r'^restaurant_search/$', 'restaurant_list.views.restaurant_search'),
 
     url(r'^upload/$', 'restaurant_list.views.upload_restaurant_list_from_file'),
 	url(r'^styleguide/', TemplateView.as_view(template_name='styleguide.html')),
