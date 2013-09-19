@@ -25,12 +25,11 @@ Application.addModule('restaurant_search', function(context) {
 		notifications: [],
 
 		init: function () {
-			console.log("HAI");
 			searchTermInputElement = context.getElement().find('.searchTerm');
 			searchTermRestaurantIdElement = context.getElement().find('.searchTermRestaurantId');
 			searchLocationInputElement = context.getElement().find('.searchLocation');
 			searchTermInputElement.autocomplete({
-				delay: 100,
+				delay: 300,
 				minLength: 2,
 				source: autocompleteSourceFetch,
 				select: autocompleteSelect

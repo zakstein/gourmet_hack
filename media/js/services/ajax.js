@@ -10,6 +10,16 @@ Application.addService('ajax', function(application) {
 		getJSONFromServer: function(url, data, callback) {
 			// For now, just wrap jQuery
 			$.get(url, data, callback, 'json');
+		},
+
+		postToServerReturnJSON: function (url, data, callback) {
+			data = data || {};
+
+			// Add csrf token
+			var csrfToken = $.cookie('csrftoken');
+			data['csrfmiddlewaretoken'] = csrfToken;
+
+			$.post(url, data, callback, 'json');
 		}
 	};
 });

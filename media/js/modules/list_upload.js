@@ -1,7 +1,7 @@
 Application.addModule('list_uploader', function(context) {
 
-	var uploadNotification = 'upload_notification';
-	var uploadFormElementSelector = '.uploader_form';
+	var uploadNotification = 'upload_notification',
+		uploadFormElementSelector = '.uploader_form';
 
 	function showLoadingStatus() {
 		context.getElement().find('.upload-in-progress').show();
@@ -42,7 +42,16 @@ Application.addModule('list_uploader', function(context) {
 				beforeSubmit: beforeListUpload,
 				error: listUploadError,
 				success: listUploadSuccess
+				// upload_process: processUpload
 			});
+		},
+
+		onfocus: function(e) {
+			var $e = $(e);
+			if ($e.hasClass('error')) {
+				$e.removeClass('error');
+				$e.find('help-inline').remove();
+			}
 		}
 	}
 });

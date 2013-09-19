@@ -86,7 +86,7 @@ window.Application = (function() {
 			eventHandlerName = 'on' + eventType;
 
 			if (moduleInstance[eventHandlerName]) {
-				$(moduleElement).on(eventType, moduleINstance[eventHandlerName]);
+				$(moduleElement).on(eventType, moduleInstance[eventHandlerName]);
 			}
 		}
 	}
