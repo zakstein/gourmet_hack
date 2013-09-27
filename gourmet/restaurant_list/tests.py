@@ -1,8 +1,9 @@
 import xlrd
 
 from django.test import TestCase
+from django.test.client import Client
 from django.contrib.auth.models import User
-from models import RestaurantList, RestaurantListElement, restaurant_list_for_user
+from models import RestaurantList, RestaurantListElement, restaurant_list_for_user, Restaurant
 import django.http
 from lib.spreadsheet import Spreadsheet
 from lib.spreadsheet_row import SpreadsheetRow
@@ -16,14 +17,32 @@ from lib.api_search_results import Api_Search_Results
 class YelpAPITest(TestCase):
     def setUp(self):
         self.apimatch = Yelp_API()
-        self.mock_response = { "businesses": [ { "categories": [ [ "Local Flavor", "localflavor" ], [ "Mass Media", "massmedia" ] ], "display_phone": "+1-415-908-3801", "id": "yelp-san-francisco", "is_claimed": "true", "is_closed": "false", "image_url": "http://s3-media2.ak.yelpcdn.com/bphoto/7DIHu8a0AHhw-BffrDIxPA/ms.jpg", "location": { "address": [ "706 Mission St" ], "city": "San Francisco", "coordinate": { "latitude": 37.786138600000001, "longitude": -122.40262130000001 }, "country_code": "US", "cross_streets": "3rd St & Opera Aly", "display_address": [ "706 Mission St", "(b/t 3rd St & Opera Aly)", "SOMA", "San Francisco, CA 94103" ], "geo_accuracy": 8, "neighborhoods": [ "SOMA" ], "postal_code": "94103", "state_code": "CA" }, "mobile_url": "http://m.yelp.com/biz/4kMBvIEWPxWkWKFN__8SxQ", "name": "Yelp", "phone": "4159083801", "rating_img_url": "http://media1.ak.yelpcdn.com/static/201012161694360749/img/ico/stars/stars_3.png", "rating_img_url_large": "http://media3.ak.yelpcdn.com/static/201012161053250406/img/ico/stars/stars_large_3.png", "rating_img_url_small": "http://media1.ak.yelpcdn.com/static/201012162337205794/img/ico/stars/stars_small_3.png", "review_count": 3347, "snippet_image_url": "http://s3-media2.ak.yelpcdn.com/photo/LjzacUeK_71tm2zPALcj1Q/ms.jpg", "snippet_text": "Sometimes we ask questions without reading an email thoroughly as many of us did for the last event. In honor of Yelp, the many questions they kindly...", "url": "http://www.yelp.com/biz/yelp-san-francisco" } ], "region": { "center": { "latitude": 37.786138600000001, "longitude": -122.40262130000001 }, "span": { "latitude_delta": 0.0, "longitude_delta": 0.0 } }, "total": 10651 }
+        self.mock_response = {"businesses": [
+            {"categories": [["Local Flavor", "localflavor"], ["Mass Media", "massmedia"]],
+             "display_phone": "+1-415-908-3801", "id": "yelp-san-francisco", "is_claimed": "true", "is_closed": "false",
+             "image_url": "http://s3-media2.ak.yelpcdn.com/bphoto/7DIHu8a0AHhw-BffrDIxPA/ms.jpg",
+             "location": {"address": ["706 Mission St"], "city": "San Francisco",
+                          "coordinate": {"latitude": 37.786138600000001, "longitude": -122.40262130000001},
+                          "country_code": "US", "cross_streets": "3rd St & Opera Aly",
+                          "display_address": ["706 Mission St", "(b/t 3rd St & Opera Aly)", "SOMA",
+                                              "San Francisco, CA 94103"], "geo_accuracy": 8, "neighborhoods": ["SOMA"],
+                          "postal_code": "94103", "state_code": "CA"},
+             "mobile_url": "http://m.yelp.com/biz/4kMBvIEWPxWkWKFN__8SxQ", "name": "Yelp", "phone": "4159083801",
+             "rating_img_url": "http://media1.ak.yelpcdn.com/static/201012161694360749/img/ico/stars/stars_3.png",
+             "rating_img_url_large": "http://media3.ak.yelpcdn.com/static/201012161053250406/img/ico/stars/stars_large_3.png",
+             "rating_img_url_small": "http://media1.ak.yelpcdn.com/static/201012162337205794/img/ico/stars/stars_small_3.png",
+             "review_count": 3347,
+             "snippet_image_url": "http://s3-media2.ak.yelpcdn.com/photo/LjzacUeK_71tm2zPALcj1Q/ms.jpg",
+             "snippet_text": "Sometimes we ask questions without reading an email thoroughly as many of us did for the last event. In honor of Yelp, the many questions they kindly...",
+             "url": "http://www.yelp.com/biz/yelp-san-francisco"}],
+                              "region": {"center": {"latitude": 37.786138600000001, "longitude": -122.40262130000001},
+                                         "span": {"latitude_delta": 0.0, "longitude_delta": 0.0}}, "total": 10651}
 
     def test_that_parse_response_handles_the_api_response_properly(self):
-
         result = Api_Search_Results(self.apimatch._parse_search_response(self.mock_response), 1, 'yelp')
         parsed_keys = result.top_match.keys()
         parsed_keys.sort()
-        self.assertEqual(parsed_keys,['address','name','url'])
+        self.assertEqual(parsed_keys, ['address', 'api_id', 'name', 'url'])
 
 
 class RestaurantListTest(TestCase):
@@ -48,6 +67,7 @@ class RestaurantListTest(TestCase):
         # rows = restaurant_list.update_restaurant_list_with_file_data(xlrd.open_workbook('restaurant_list/sophia_test_data.xlsx', encoding_override='utf-8'))
         # self.assertEqual(155, len(rows))
 
+
 class SpreadsheetTest(TestCase):
     def setUp(self):
         self.book = xlrd.open_workbook('restaurant_list/sophia_test_data.xlsx')
@@ -64,7 +84,7 @@ class SpreadsheetTest(TestCase):
         self.assertTrue(self.sheet._check_headers_have_required_headers(headers))
 
     def test_check_headers_returns_false_when_headers_are_not_present(self):
-        headers = [ self.CellMock(ctype=1, value=u'notrestaurant')]
+        headers = [self.CellMock(ctype=1, value=u'notrestaurant')]
 
         self.assertFalse(self.sheet._check_headers_have_required_headers(headers))
 
@@ -78,21 +98,12 @@ class SpreadsheetTest(TestCase):
         self.assertEqual('Notes', self.sheet.header_to_column_index_map[6])
 
     class CellMock(object):
-
         def __init__(self, ctype, value):
             self.ctype = ctype
             self.value = value
 
-class RestaurantListElementTest(TestCase):
-    def setUp(self):
-        self.book = xlrd.open_workbook('restaurant_list/sophia_test_data.xlsx')
-        self.sheet = Spreadsheet(RestaurantListElement, self.book, ['restaurant'])
-        self.sheet._map_header_name_to_column_index(
-            self.sheet._get_headers_from_sheet(
-                self.book.sheet_by_index(0)
-            )
-        )
 
+class RestaurantListElementTest(TestCase):
     def test_set_all_fields_from_spreadsheet_row_and_save(self):
         user = User(username='zakstein', password='test1234')
         user.save()
@@ -101,22 +112,34 @@ class RestaurantListElementTest(TestCase):
         restaurant_list = RestaurantList(owner=user)
         restaurant_list.save()
 
-        list_element.restaurantList = restaurant_list
-        list_element.set_all_fields_from_spreadsheet_row_and_save(
-            self.book.sheet_by_index(0).row(1),
-            self.sheet.header_to_column_index_map
+        list_element_fields = {'rating': '90', 'has_been': True, 'notes': 'good test'}
+        restaurant = Restaurant(
+            name='test restaurant',
+            full_address='1234 test ave, testopolis testifornia',
+            address='1234 test ave',
+            city='testopolis',
+            state='testifornia',
+            country='testopia',
+            zip_code='12345',
+            url='http://www.example.com',
         )
 
-    def test_get_address_including_city_and_self(self):
-        info = {'address': '108 Mission ', 'city': 'San Francisco'}
-        element = RestaurantListElement();
-        self.assertEqual('108 Mission, San Francisco', element._get_address_including_city(info))
+        unclassified_info = {'did_zak_go': True, 'reservation_size': 20}
+
+        list_element.restaurantList = restaurant_list
+        list_element.set_all_fields_from_restaurant_and_element_info(
+            list_element_fields, restaurant, unclassified_info
+        )
+
+        self.assertEqual(list_element_fields['rating'], list_element.rating)
+        self.assertEqual(restaurant, list_element.restaurant)
 
 
 class SpreadsheetRowTest(TestCase):
     """
     Tests the SpreadsheetRow class
     """
+
     def setUp(self):
         self.required_column_count = {'restaurant': 0}
         self.book = xlrd.open_workbook('restaurant_list/sophia_test_data.xlsx')
@@ -132,14 +155,13 @@ class SpreadsheetRowTest(TestCase):
             spreadsheet=self.spreadsheet
         )
 
-    @patch.object(RestaurantListElement, 'set_all_fields_from_spreadsheet_row_and_save')
+    @patch.object(RestaurantListElement, 'set_all_fields_from_restaurant_and_element_info')
     def test_parse_row_correctly_parses_row(self, mock_method):
-
         self.spreadsheet._map_header_name_to_column_index(
             self.spreadsheet._get_headers_from_sheet(self.first_sheet)
         )
         self.row.row = self.first_sheet.row(1)
-        self.row.header_to_column_index_map =  self.spreadsheet.header_to_column_index_map
+        self.row.header_to_column_index_map = self.spreadsheet.header_to_column_index_map
 
         self.row.parse_row()
 
@@ -156,13 +178,19 @@ class SpreadsheetRowTest(TestCase):
 
         self.assertEqual(0, self.required_column_count['restaurant'])
 
+    def test_get_address_including_city_and_self(self):
+        info = {'address': '108 Mission ', 'city': 'San Francisco'}
+        spreadsheet_row = SpreadsheetRow(self.spreadsheet.data.sheet_by_index(0).row(0), RestaurantListElement, self.spreadsheet)
+        self.assertEqual('108 Mission, San Francisco', spreadsheet_row._get_address_including_city(info))
+
+
+
 class AuthorizationRequiredTest(TestCase):
     """
     Tests the authorization_required decorator
     """
 
     def setUp(self):
-
         self.request = Mock()
         self.request.user = 'user_1'
 
@@ -184,3 +212,19 @@ class AuthorizationRequiredTest(TestCase):
         decorated_function(self.request, user='user_2')
 
         self.assertFalse(function.called)
+
+class EndToEndTests(TestCase):
+    """
+    Tests various key end to end features
+    """
+    def setUp(self):
+        self.user = User.objects.create_user('zakstein', 'zakstein@test.com', 'test1234')
+        self.user.save()
+
+    def test_add_restaurant(self):
+        client = Client()
+        client.login(username=self.user.username, password='test1234')
+        # {u'rating': [u'85'], u'restaurant_id': [u'marlowe-san-francisco-2'], u'location': [u'San Francisco'], u'restaurant_name': [u'Marlowe'], u'has_been': [u'on'], u'csrfmiddlewaretoken': [u'944f8e66176a6b072c5cd93d03d9138d'], u'notes': [u'notes1']}
+        post_data = django.http.QueryDict('rating=85&restaurant_id=marlowe-san-francisco-2&location=San%20Francisco&restaurant_name=Marlowe&has_been=on&notes=notes1')
+        response = client.post('/add/', post_data)
+        print response

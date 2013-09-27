@@ -1,8 +1,8 @@
-<table class="table table-hover module" data-module='restaurant_list'>
+<table class="table table-hover">
 <thead>
     <tr>
-        <th><strong>Eaten</strong></th>
         <th><strong>Restaurant</strong></th>
+        <th><strong>Eaten</strong></th>
         <th><strong>Rating</strong></th>
         <th><strong>Notes</strong></th>
         <th><strong>Address</strong></th>
@@ -10,26 +10,26 @@
 </thead>
 <tbody>
 {% for restaurant_element in restaurant_list %}
-    <tr>
-        <td>
-            {% if restaurant_element.has_been %}
-                <i class="icon-ok"></i>
-            {%  else %}
-                <i class="icon-minus"></i>
-            {% endif %}
-        </td>
-        <td>
+    <tr id="{{ restaurant_element.id }}">
+        <td class="restaurant_name">
         {% if not restaurant_element.restaurant.name %}
             We didn't understand: {{ restaurant_element.raw_upload_info.name }}
         {% else %}
             <a href="{{ restaurant_element.restaurant.url }}" target="_blank">{{ restaurant_element.restaurant.name }}</a>
         {%  endif %}
         </td>
-        <td>{{ restaurant_element.rating}}</td>
-        <td>{{ restaurant_element.notes }} </td>
+        <td class="has_been{% if restaurant_element.has_been %} been{% endif %}">
+            {% if restaurant_element.has_been %}
+                <i class="icon-ok"></i>
+            {%  else %}
+                <i class="icon-minus"></i>
+            {% endif %}
+        </td>
+        <td class="rating">{{ restaurant_element.rating }}</td>
+        <td class="notes">{{ restaurant_element.notes }} </td>
         <td>{{ restaurant_element.restaurant.full_address }}</td>
         {% if can_edit_rows %}
-            <td><a href="#">edit</a></td>
+            <td><a href="#" class="edit_restaurant">edit</a> | <a href="#" class="delete_restaurant">delete</a></td>
         {% endif %}
     </tr>
 {% endfor %}

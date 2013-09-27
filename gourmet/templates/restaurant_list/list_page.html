@@ -1,15 +1,28 @@
 {% extends "base.html" %}
+{% block header %}
+    {% block title %}List{% endblock %}
+{% endblock %}
 {% block content %}
-	{% include "restaurant_list/list_upload.html" %}
-	{% include "restaurant_list/list.html" %}
+    <div class="masthead">
+        <h3 class="muted">Gourmizzle</h3>
+    </div>
+    {% include "restaurant_list/list_upload.html" %}
+    <div class="module" data-module="restaurant_list">
+        {% include "restaurant_list/list.html" %}
+    </div>
     {% if can_edit_rows %}
         {% include "restaurant_list/add_restaurant.html" %}
+        {% include "restaurant_list/add_edit_modal.html" %}
     {% endif %}
 {% endblock %}
 {% block javascript_includes %}
     <script src="/js/lib/jquery-ui-1.10.3.custom.min.js"></script>
+    <script src="/js/lib/jquery.cookie.js"></script>
     <script src="/js/modules/list_upload.js"></script>
     <script src="/js/modules/list.js"></script>
     <script src="/js/modules/restaurant_search.js"></script>
+    <script src="/js/modules/add_restaurant.js"></script>
+    <script src="/js/modules/edit_restaurant.js"></script>
     <script src="/js/services/ajax.js"></script>
+    <script src="/js/services/form_validator.js"></script>
 {% endblock %}

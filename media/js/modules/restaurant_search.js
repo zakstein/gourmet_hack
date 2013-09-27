@@ -32,7 +32,8 @@ Application.addModule('restaurant_search', function(context) {
 				delay: 300,
 				minLength: 2,
 				source: autocompleteSourceFetch,
-				select: autocompleteSelect
+				select: autocompleteSelect,
+				focus: autocompleteSelect
 			});
 		},
 	};

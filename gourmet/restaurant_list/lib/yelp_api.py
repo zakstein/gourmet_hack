@@ -79,8 +79,11 @@ class Yelp_API(API):
 
             return Api_Search_Results(self._parse_search_response(response), response['total'], name)
 
-
         def fetch_restaurant_info(self, restaurant_id):
+            """
+            :param restaurant_id:
+            :return:
+            """
             self.path = 'http://api.yelp.com/v2/business/' + restaurant_id
 
             self.url_params = {}

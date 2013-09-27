@@ -1,8 +1,8 @@
 from spreadsheet_row import SpreadsheetRow
 from exceptions import RequiredColumnNotFound
 
-class Spreadsheet(object):
 
+class Spreadsheet(object):
     MAX_SPREADSHEET_ROW_COUNT = 1000
 
     def __init__(self, list_model_instance, data, required_headers):
@@ -50,7 +50,6 @@ class Spreadsheet(object):
                 print "Required column not found"
             except ValueError:
                 print "Error saving values"
-
 
         return row_results
 

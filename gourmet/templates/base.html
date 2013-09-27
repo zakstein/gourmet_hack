@@ -8,15 +8,14 @@
 <link rel="stylesheet" type ="text/css" href="/css/bootstrap.css">
 <link rel="stylesheet" type ="text/css" href="/css/autocomplete.css">
 </head>
-{% block styles %}
-{% endblock %}
+{% block styles %}{% endblock %}
 <body id="{% block body_id %}{% endblock %}" class="{% block body_class %}{% endblock %}">
     {% block body %}
       <div class="content">
         {% block content %}{% endblock %}
       </div>
 	  {% block footer %}
-	  	<div class="footer meta">
+	  	<div class="footer meta text-center">
 	  		<a href="/about_us/">About us</a> &middot; 
 			<a href="mailto:zakstein@gmail.com">Contact us</a> &middot;
 			&copy; 2013

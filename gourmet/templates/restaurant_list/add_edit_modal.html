@@ -1,10 +1,31 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-    <title></title>
-</head>
-<body>
-
-</body>
-</html>
+{% for modal_type in modals_to_include %}
+    <div id="{{ modal_type }}-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="{{ modal_type }}Modal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3>{{ modal_type|capfirst }} restaurant</h3>
+        </div>
+        <form class="form module" data-module="{{ modal_type }}_restaurant" method="POST" action="/{{ modal_type }}/">
+            <div class="modal-body">
+                {% csrf_token %}
+                {% if modal_type == 'add' %}
+                    <span class="restaurant-search module control-group" data-module="restaurant_search">
+                        <input name="restaurant_name" class="searchTerm" type="text" placeholder="Restaurant name" /> near <input name="location" class="searchLocation" type="text" value="San Francisco" />
+                        <input type="hidden" value="" name="restaurant_id" class="searchTermRestaurantId" />
+                    </span>
+                {% else %}{% if modal_type == 'edit' %}
+                    <input name="restaurant_name" type="text" value="" />
+                    <input type="hidden" value="" name="restaurant_list_element_id" />
+                {% endif %}{% endif %}
+                <div class="form-inline control-group">
+                    <label class="checkbox"><input type="checkbox" id="has_been" name="has_been" /> Been</label>
+                    <input name="rating" type="text" class="input-mini" placeholder="Rating (1-100)" />
+                </div>
+                <textarea name="notes" placeholder="Notes" rows="4"></textarea>
+            </div>
+            <div class="modal-footer">
+                <input type="submit" class="btn btn-inverse" value="{{ modal_type|capfirst }} Restaurant" />
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            </div>
+        </form>
+    </div>
+{% endfor %}

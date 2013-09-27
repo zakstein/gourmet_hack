@@ -5,7 +5,7 @@ Application.addModule('add_restaurant', function(context) {
 		form_validation_service = context.getService('form_validator');
 
 	function validateRestaurant(formData, $form, options) {
-		form_validation_service.validate_add_restaurant($form);
+		return form_validation_service.validate_add_restaurant($form);
 	}
 
 	function restaurantAddError(responseText, statusText, xhr, $form) {

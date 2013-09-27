@@ -18,9 +18,10 @@ Application.addService('form_validator', function(application) {
 
 	function set_error_for_field($field, message) {
 		message = message || '';
+		var $controlGroup = $field.closest('.control-group');
 
-		$field.addClass('error');
-		$field.append('<span class="help-inline">' + message + '</span>');
+		$controlGroup.addClass('error');
+		$controlGroup.append('<div class="help-inline">' + message + '</div>');
 	}
 
 	return {
