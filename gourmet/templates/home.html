@@ -6,38 +6,40 @@
         {% block body_id %}homepage{% endblock %}
         {% block class %}homepage-container{% endblock %}
 {% block content %}
-<div class="background-container">
-        <div class="nav-container">
+    <div class="content">
+        <div class="background-container">
+            <div class="nav-container">
                 <ul>
-                        <li class="nav-item logo">
+                    <li class="nav-item logo">
                         Project Cookie Monster
-                        </li>
-                        <li class="nav-item middle-div">
-                        </li>
-                        <li class="nav-item sign-in">
+                    </li>
+                    <li class="nav-item middle-div">
+                    </li>
+                    <li class="nav-item sign-in">
                         <a class="btn btn-primary" href="/accounts/signin/">Sign in</a>
-                        </li>
+                    </li>
                 </ul>
-        </div>
-        <div class="hero-container">
+            </div>
+            <div class="hero-container">
                 <div class ="sign-up">
-                        <form action='/accounts/signup/' method="post">
-                            {% csrf_token %}
-                                <p>
-                                        <label for="id_email">Email</label>
-                                        <input id="id_email" type="text" class="required" name="email" maxlength="75">
-                                </p>
-                                <p>
-                                        <label for="id_password1">Password</label>
-                                        <input id="id_password1" type="password" class="required" name="password1">
-                                </p>
-                                <p>
-                                    <label for="id_password2">Confirm password</label>
-                                        <input id="id_password2" type="password" class="required" name="password2">
-                                </p>
-                                <input class="btn" type="submit" value="Signup"/>
-                        </form>
+                    <form action='/accounts/signup/' method="post">
+                        {% csrf_token %}
+                        <p>
+                            <label for="id_email">Email</label>
+                            <input id="id_email" type="text" class="required" name="email" maxlength="75">
+                        </p>
+                        <p>
+                            <label for="id_password1">Password</label>
+                            <input id="id_password1" type="password" class="required" name="password1">
+                        </p>
+                        <p>
+                            <label for="id_password2">Confirm password</label>
+                            <input id="id_password2" type="password" class="required" name="password2">
+                        </p>
+                        <input class="btn" type="submit" value="Signup"/>
+                    </form>
                 </div>
+            </div>
         </div>
-</div>
+    </div>
 {% endblock %}

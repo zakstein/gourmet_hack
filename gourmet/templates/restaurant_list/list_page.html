@@ -1,19 +1,22 @@
 {% extends "base.html" %}
 {% block header %}
     {% block title %}List{% endblock %}
+    {% block styles %}<link rel="stylesheet" type ="text/css" href="/css/list.css">{% endblock %}
 {% endblock %}
 {% block content %}
-    <div class="masthead">
-        <h3 class="muted">Gourmizzle</h3>
+    <div class="content container-list">
+        <div class="masthead">
+            <h3 class="muted">Gourmizzle</h3>
+        </div>
+        {% include "restaurant_list/list_upload.html" %}
+        <div class="module" data-module="restaurant_list">
+            {% include "restaurant_list/list.html" %}
+        </div>
+        {% if can_edit_rows %}
+            {% include "restaurant_list/add_restaurant.html" %}
+            {% include "restaurant_list/add_edit_modal.html" %}
+        {% endif %}
     </div>
-    {% include "restaurant_list/list_upload.html" %}
-    <div class="module" data-module="restaurant_list">
-        {% include "restaurant_list/list.html" %}
-    </div>
-    {% if can_edit_rows %}
-        {% include "restaurant_list/add_restaurant.html" %}
-        {% include "restaurant_list/add_edit_modal.html" %}
-    {% endif %}
 {% endblock %}
 {% block javascript_includes %}
     <script src="/js/lib/jquery-ui-1.10.3.custom.min.js"></script>
