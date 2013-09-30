@@ -5,7 +5,7 @@ Application.addService('form_validator', function(application) {
 		var is_valid = true;
 		var form = $form[0];
 		var rating = form.rating.value;
-		if (form.has_been.value && (isNaN(parseInt(rating)) || parseInt(rating) < 1 || parseInt(rating) > 100)) {
+		if ($(form.has_been).prop('checked') && (isNaN(parseInt(rating)) || parseInt(rating) < 1 || parseInt(rating) > 100)) {
 			set_error_for_field($(form.rating), 'Incorrect rating. Enter a number between 1 and 100');
 			is_valid = false;
 		} else if (!form.has_been.value && rating) {
@@ -21,6 +21,7 @@ Application.addService('form_validator', function(application) {
 		var $controlGroup = $field.closest('.control-group');
 
 		$controlGroup.addClass('error');
+		$controlGroup.find('.help-inline').remove();
 		$controlGroup.append('<div class="help-inline">' + message + '</div>');
 	}
 

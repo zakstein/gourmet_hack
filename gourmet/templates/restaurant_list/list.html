@@ -25,7 +25,7 @@
                 <i class="icon-minus"></i>
             {% endif %}
         </td>
-        <td class="rating">{{ restaurant_element.rating }}</td>
+        <td class="rating">{% if restaurant_element.rating != -1 %}{{ restaurant_element.rating }}{% else %}N/A{% endif %}</td>
         <td class="notes">{{ restaurant_element.notes }} </td>
         <td>{{ restaurant_element.restaurant.full_address }}</td>
         {% if can_edit_rows %}

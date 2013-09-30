@@ -8,8 +8,8 @@ class UploadRestaurantFileForm(forms.Form):
 class BaseRestaurantForm(forms.Form):
     restaurant_name = forms.CharField()
     has_been = forms.BooleanField(required=False)
-    rating = forms.IntegerField(required=False, min_value=1, max_value=100)
-    notes = forms.CharField()
+    rating = forms.IntegerField(required=False, min_value=0, max_value=100)
+    notes = forms.CharField(required=False)
 
     def clean(self):
         cleaned_data = self.cleaned_data
