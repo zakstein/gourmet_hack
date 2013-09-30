@@ -5,6 +5,11 @@ class python {
 		require => Exec['apt-key-update'],
     }
 
+    package { 'python-dev':
+        ensure => 'latest',
+		require => Exec['apt-key-update'],
+    }
+
 	package { 'python-gdata':
 		ensure => 'latest',
 		require => Exec['apt-key-update'],

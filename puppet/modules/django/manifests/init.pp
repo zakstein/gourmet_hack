@@ -35,6 +35,6 @@ class django {
                 path => $path,
                 user => 'root',
                 group => 'root',
-                require => Package['python-pip'],
+                require => [Package['python-pip'], Package['python-django'],
         }
 }
