@@ -65,7 +65,7 @@ STATIC_ROOT = '/vagrant/media'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/media/'
+STATIC_URL = '/'
 
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
@@ -173,5 +173,8 @@ LOGOUT_URL = '/accounts/signout/'
 USERENA_SIGNIN_REDIRECT_URL = '/'
 USERENA_REDIRECT_ON_SIGNOUT = '/'
 
-USERENA_ACTIVATION_REQUIRED = False
+USERENA_ACTIVATION_REQUIRED = True
 USERENA_SIGNIN_AFTER_SIGNUP = True
+
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = '/tmp/app-messages'

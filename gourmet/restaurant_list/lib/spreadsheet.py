@@ -1,4 +1,4 @@
-from spreadsheet_row import SpreadsheetRow
+import spreadsheet_row
 from exceptions import RequiredColumnNotFound
 
 
@@ -10,6 +10,7 @@ class Spreadsheet(object):
         Takes in a list model to translate to and the raw spreadsheet data
         The required headers are headers that if we don't find, we will throw an error
         """
+        print 'In spreadsheet __init__'
         self.list_model_instance = list_model_instance
         self.data = data
         self.required_headers = required_headers
@@ -37,15 +38,13 @@ class Spreadsheet(object):
         for i in range(1, min(self.MAX_SPREADSHEET_ROW_COUNT, sheet.nrows)):
             try:
                 print "Trying row " + str(i)
-                row = SpreadsheetRow(
+                row = spreadsheet_row.SpreadsheetRow(
                     sheet.row(i),
                     list_element_model,
                     self
                 )
                 row.parse_row()
                 row_results.append(row)
-                if i > 3:
-                    break
             except RequiredColumnNotFound:
                 print "Required column not found"
             except ValueError:

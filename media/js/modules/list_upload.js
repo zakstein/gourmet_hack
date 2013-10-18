@@ -7,51 +7,78 @@ Application.addModule('list_uploader', function(context) {
 		context.getElement().find('.upload-in-progress').show();
 	}
 
-	function hideLoadingStatus() {
-		context.getElement().find('.upload-in-progress').hide();
+	function cleanupUpload() {
+		var element = context.getElement();
+		element.find('.upload-in-progress').hide();
+		element.find('.file-input').val(null)
+	}
+
+	function updateLoadingStatusWithPercent(percent) {
+		context.getElement().find('.bar').width(percent + '%');
 	}
 
 	function beforeListUpload(formData, $form, options) {
 		context.log($form.find('input[type=file]').val());
 		var alertString = 'Please select a file to be submitted!';
-		if (!$form.find('input[type=file]').val()) {
+		var inputValue = $form.find('input[type=file]').val();
+		if (!inputValue) {
 			alert(alertString);
 			return false;
 		}
-
+		if (inputValue.indexOf('csv') == -1 && inputValue.indexOf('xls') == -1 && inputValue.indexOf('xlsx') == -1) {
+			alert('Could not read that file. Please upload a csv, xls, or xlsx file');
+			return false
+		}
 		showLoadingStatus();
 		return true;
+	}
+
+	function updateUploadProgress(e, position, total, percentComplete) {
+		updateLoadingStatusWithPercent(percentComplete);
 	}
 
 	function listUploadError(responseText, statusText, xhr, $form) {
 		context.log(responseText, statusText, xhr, $form);
 		alert('Could not upload your file. Status was ' + statusText + ' ' + xhr + '. Please retry your upload.');
+		cleanupUpload();
 	}
 
 	function listUploadSuccess(responseText, statusText, xhr, $form) {
 		context.log(responseText, statusText, xhr, $form);
 		context.broadcast(uploadNotification, {});
-		hideLoadingStatus();
+		cleanupUpload();
 	}
 
 	return {
 		notifications: [],
 
 		init: function() {
-			context.getElement().find(uploadFormElementSelector).ajaxForm({
-				beforeSubmit: beforeListUpload,
-				error: listUploadError,
-				success: listUploadSuccess
-				// upload_process: processUpload
+			var element = context.getElement();
+			var formElement = element.find(uploadFormElementSelector);
+			formElement.ajaxForm();
+
+			// NOTE (zak): Due to browser awesomeness, the change event doesn't propagate from the input element,
+			// so we need to attach an event manually
+			element.find('.file-input').on('change', function (e) {
+				formElement.ajaxSubmit({
+					beforeSubmit: beforeListUpload,
+					error: listUploadError,
+					success: listUploadSuccess,
+					uploadProgress: updateUploadProgress
+				})
 			});
 		},
 
+		destroy: function() {
+			context.getElement().find('.file-input').off('change');
+		},
+
 		onfocus: function(e) {
-			var $e = $(e);
-			if ($e.hasClass('error')) {
-				$e.removeClass('error');
-				$e.find('help-inline').remove();
+			var $target = $(e.target);
+			if ($target.hasClass('error')) {
+				$target.removeClass('error');
+				$target.find('help-inline').remove();
 			}
-		}
+		},
 	}
 });

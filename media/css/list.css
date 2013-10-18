@@ -2,3 +2,21 @@
 	max-width: 1170px;
 	margin: 0 auto;
 }
+
+.btn-file {
+	position: relative;
+	overflow: hidden;
+}
+
+.btn-file input {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	opacity: 0;
+	filter: alpha(opacity=0);
+	font-size: 23px;
+	direction: ltr;
+	cursor: pointer;
+}
+

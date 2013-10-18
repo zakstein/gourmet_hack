@@ -1,14 +1,15 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.utils import simplejson
 from django.core.mail import mail_admins
 from django.utils.translation import ugettext as _
 from lib.authorization_check import Authorization_Check
 import sys
+from django import forms
 
 
 def json_view(func):
     """
-	Taken from http://djangosnippets.org/snippets/622/
+	Based on http://djangosnippets.org/snippets/622/
 	"""
 
     def wrap(request, *a, **kw):
@@ -21,6 +22,9 @@ def json_view(func):
         except KeyboardInterrupt:
             # Allow keyboard interrupts through for debugging.
             raise
+        except forms.ValidationError, e:
+            response = simplejson.dumps({'message': e.message})
+            return HttpResponseBadRequest(response, mimetype='application/json')
         except Exception, e:
             # Mail the admins with the error
             exc_info = sys.exc_info()
@@ -38,11 +42,8 @@ def json_view(func):
             mail_admins(subject, message, fail_silently=True)
 
             # Come what may, we're returning JSON.
-            if hasattr(e, 'message'):
-                msg = e.message
-            else:
-                msg = _('Internal error') + ': ' + str(e)
-                response = {'result': 'error', 'text': msg}
+            msg = _('Internal error') + ': ' + str(e)
+            response = {'result': 'error', 'text': msg}
 
         json = simplejson.dumps(response)
         return HttpResponse(json, mimetype='application/json')

@@ -1,6 +1,6 @@
 from exceptions import RequiredColumnNotFound
-from restaurant_list.lib.yelp_api import Yelp_API
-from restaurant_list.models import Restaurant, fetch_restaurant_from_database_or_api
+import restaurant_list.lib.yelp_api
+import restaurant_list.models
 
 
 class SpreadsheetRow(object):
@@ -29,13 +29,13 @@ class SpreadsheetRow(object):
         if not restaurant_fields['city']:
             raise RequiredColumnNotFound('Address is a required field')
 
-        api = Yelp_API()
+        api = restaurant_list.lib.yelp_api.Yelp_API()
         api_search_result = api.search(name=restaurant_fields['name'], location=self._get_address_including_city(restaurant_fields))
 
         restaurant = None
 
         if api_search_result.match_confidence:
-            restaurant = fetch_restaurant_from_database_or_api(api_search_result.top_match)
+            restaurant = restaurant_list.models.fetch_restaurant_from_database_or_api(api_search_result.top_match)
         else:
             unclassified_fields = dict(restaurant_fields.items() + unclassified_fields.items())
 
@@ -65,7 +65,7 @@ class SpreadsheetRow(object):
         restaurant_fields = {}
         list_element_fields = {}
         model_field_names = self.list_element_model_instance._meta.get_all_field_names()
-        restaurant_field_names = Restaurant._meta.get_all_field_names()
+        restaurant_field_names = restaurant_list.models.Restaurant._meta.get_all_field_names()
         for idx, cell in enumerate(self.row):
             cell_name = self.header_to_column_index_map[idx].lower()
             cell_value = cell.value

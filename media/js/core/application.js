@@ -6,7 +6,7 @@ window.Application = (function() {
 		services = {}, // Information about services by serviceName
 		widgets = {}, // Information about widgets by widgetName
 		instances = {}, // Module instances that have been instantiated
-		eventTypes = ['click', 'mouseout', 'mouseover', 'focus', 'blur']; // Event types used for event listeners
+		eventTypes = ['click', 'mouseout', 'mouseover', 'focus', 'blur', 'change']; // Event types used for event listeners
 
 	function getModuleName(element) {
 		var moduleDeclaration = $(element).data('module');

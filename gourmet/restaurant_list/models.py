@@ -1,7 +1,7 @@
 import json
 
 from django.db import models
-import lib
+import lib.spreadsheet
 from django.contrib.auth import models as auth_models
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
@@ -33,8 +33,6 @@ class RestaurantList(models.Model):
         """
         required_headers = ['restaurant', 'city']
         spreadsheet = lib.spreadsheet.Spreadsheet(self, file_book, required_headers)
-        print 'Got spreadsheet!'
-        print spreadsheet
         return spreadsheet.parse(RestaurantListElement)
 
 

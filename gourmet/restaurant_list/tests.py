@@ -64,8 +64,8 @@ class RestaurantListTest(TestCase):
     def test_update_restaurant_list_with_file_data_works(self):
         restaurant_list = RestaurantList(owner=self.user)
         restaurant_list.save()
-        # rows = restaurant_list.update_restaurant_list_with_file_data(xlrd.open_workbook('restaurant_list/sophia_test_data.xlsx', encoding_override='utf-8'))
-        # self.assertEqual(155, len(rows))
+        rows = restaurant_list.update_restaurant_list_with_file_data(xlrd.open_workbook('restaurant_list/sophia_test_data.xlsx', encoding_override='utf-8'))
+        self.assertEqual(155, len(rows))
 
 
 class SpreadsheetTest(TestCase):
@@ -220,11 +220,17 @@ class EndToEndTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user('zakstein', 'zakstein@test.com', 'test1234')
         self.user.save()
+        self.client = Client()
+        self.client.login(username=self.user.username, password='test1234')
 
     def test_add_restaurant(self):
-        client = Client()
-        client.login(username=self.user.username, password='test1234')
         # {u'rating': [u'85'], u'restaurant_id': [u'marlowe-san-francisco-2'], u'location': [u'San Francisco'], u'restaurant_name': [u'Marlowe'], u'has_been': [u'on'], u'csrfmiddlewaretoken': [u'944f8e66176a6b072c5cd93d03d9138d'], u'notes': [u'notes1']}
         post_data = django.http.QueryDict('rating=85&restaurant_id=marlowe-san-francisco-2&location=San%20Francisco&restaurant_name=Marlowe&has_been=on&notes=notes1')
-        response = client.post('/add/', post_data)
+        response = self.client.post('/add/', post_data)
         print response
+
+    def test_upload_sheet(self):
+        with open('restaurant_list/sophia_test_data.xlsx') as fp:
+            import pdb; pdb.set_trace()
+            response = self.client.post('/upload/', {'input_spreadsheet': fp})
+

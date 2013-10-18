@@ -5,6 +5,7 @@ from django.views.decorators.http import require_POST
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.forms import ValidationError
 from forms import UploadRestaurantFileForm, AddRestaurantForm, EditRestaurantForm
 from models import restaurant_list_for_user, RestaurantListElement, fetch_restaurant_from_database_or_api
 from decorators import json_view,authorization_required
@@ -24,6 +25,7 @@ def display_home_page(request):
 def upload_restaurant_list_from_file(request):
     form = UploadRestaurantFileForm(request.POST, request.FILES)
     if form.is_valid():
+        print 'Valid form!'
         input_excel = request.FILES['input_spreadsheet']
         book = xlrd.open_workbook(file_contents=input_excel.read())
 
@@ -34,7 +36,7 @@ def upload_restaurant_list_from_file(request):
 
         return {'result': 'success'}
 
-    return {'result': 'failure'}
+    raise ValidationError('Invalid form!')
 
 def _get_restaurant_list_for_user(user):
     restaurant_elements = restaurant_list_for_user(user).restaurantlistelement_set.all()
