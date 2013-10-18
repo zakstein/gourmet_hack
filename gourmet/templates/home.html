@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% block header %}
         {% block title %}Cookie Monster Project{% endblock %}
             {% block styles %}<link rel="stylesheet" type ="text/css" href="/css/home.css">{% endblock %}
@@ -23,20 +24,28 @@
             <div class="hero-container">
                 <div class ="sign-up">
                     <form action='/accounts/signup/' method="post">
-                        {% csrf_token %}
-                        <p>
-                            <label for="id_email">Email</label>
-                            <input id="id_email" type="text" class="required" name="email" maxlength="75">
-                        </p>
-                        <p>
-                            <label for="id_password1">Password</label>
-                            <input id="id_password1" type="password" class="required" name="password1">
-                        </p>
-                        <p>
-                            <label for="id_password2">Confirm password</label>
-                            <input id="id_password2" type="password" class="required" name="password2">
-                        </p>
-                        <input class="btn btn-danger btn-large" type="submit" value="Signup"/>
+                        <fieldset>
+                            {% csrf_token %}
+                            <div class="control-group">
+                                <div class="controls input-prepend">
+                                    <span class="add-on"><i class="icon-user"></i></span>
+                                    <input class="required input-xlarge" id="id_identification" maxlength="75" name="email" type="text" placeholder="{% trans "Email" %}" />
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <div class="controls input-prepend">
+                                    <span class="add-on"><i class="icon-asterisk"></i></span>
+                                    <input class="required input-xlarge" id="id_password" name="password1" type="password" placeholder="{% trans "Password" %}" />
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <div class="controls input-prepend">
+                                    <span class="add-on"><i class="icon-asterisk"></i></span>
+                                    <input class="required input-xlarge" id="id_password" name="password1" type="password" placeholder="{% trans "Confirm password" %}" />
+                                </div>
+                            </div>
+                        </fieldset>
+                        <input class="btn btn-danger btn-large text-center" type="submit" value="Signup"/>
                     </form>
                 </div>
             </div>
