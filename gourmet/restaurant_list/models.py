@@ -26,6 +26,8 @@ class Restaurant(models.Model):
 
 class RestaurantList(models.Model):
     owner = models.OneToOneField(auth_models.User)
+    sort_by = models.CharField(max_length=256, default='rating')
+    sort_direction = models.CharField(max_length=256, default='DESC')
 
     def update_restaurant_list_with_file_data(self, file_book):
         """

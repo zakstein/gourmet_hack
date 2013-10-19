@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.forms import ValidationError
 from forms import UploadRestaurantFileForm, AddRestaurantForm, EditRestaurantForm
 from models import restaurant_list_for_user, RestaurantListElement, fetch_restaurant_from_database_or_api
-from decorators import json_view,authorization_required
+from decorators import json_view, authorization_required
 from lib.authorization_check import Authorization_Check, DELETE_ACTION, VIEW_ACTION, EDIT_ACTION
 from restaurant_list.lib.yelp_api import Yelp_API
 
@@ -18,6 +18,7 @@ def display_home_page(request):
         return HttpResponseRedirect('/list/')
     else:
         return render(request, 'home.html', content_type="text/html")
+
 
 @require_POST
 @login_required
@@ -38,13 +39,19 @@ def upload_restaurant_list_from_file(request):
 
     raise ValidationError('Invalid form!')
 
-def _get_restaurant_list_for_user(user):
-    restaurant_elements = restaurant_list_for_user(user).restaurantlistelement_set.all()
+
+def _get_restaurant_list_elements_for_user(user):
+    restaurant_list = restaurant_list_for_user(user)
+    order_direction_sign = '+' if restaurant_list.sort_direction == 'ASC' else '-'
+
+    restaurant_elements = restaurant_list.restaurantlistelement_set.all().order_by(
+        order_direction_sign + restaurant_list.sort_by
+    )
     for restaurant_element in restaurant_elements:
-        restaurant_element.raw_upload_info  = json.loads(restaurant_element.raw_upload_info)
-        print restaurant_element.raw_upload_info
+        restaurant_element.raw_upload_info = json.loads(restaurant_element.raw_upload_info)
 
     return restaurant_elements
+
 
 def _render_restaurant_list_response_with_template(request, template_name, restaurant_elements, user_to_display):
     return render_to_response(
@@ -57,6 +64,7 @@ def _render_restaurant_list_response_with_template(request, template_name, resta
         },
     )
 
+
 @login_required
 @authorization_required(VIEW_ACTION)
 def display_restaurant_list_and_upload_for_user(request, user_to_display):
@@ -64,7 +72,7 @@ def display_restaurant_list_and_upload_for_user(request, user_to_display):
     if not user_to_display:
         user_to_display = user
 
-    restaurant_elements = _get_restaurant_list_for_user(user_to_display)
+    restaurant_elements = _get_restaurant_list_elements_for_user(user_to_display)
 
     return _render_restaurant_list_response_with_template(
         request,
@@ -77,6 +85,7 @@ def display_restaurant_list_and_upload_for_user(request, user_to_display):
 def display_restaurant_list_and_upload_for_current_user(request):
     return display_restaurant_list_and_upload_for_user(request, request.user)
 
+
 @login_required
 @authorization_required(VIEW_ACTION)
 def display_restaurant_list_for_user(request, user_to_display):
@@ -84,7 +93,7 @@ def display_restaurant_list_for_user(request, user_to_display):
     if not user_to_display:
         user_to_display = user
 
-    restaurant_elements = _get_restaurant_list_for_user(user_to_display)
+    restaurant_elements = _get_restaurant_list_elements_for_user(user_to_display)
 
     return _render_restaurant_list_response_with_template(
         request,
@@ -93,8 +102,23 @@ def display_restaurant_list_for_user(request, user_to_display):
         user_to_display
     )
 
+
+@login_required
+def update_restaurant_list_sorting_for_user_and_return_updated_list(request, user, sort_by, sort_direction):
+    sort_direction_is_correct = sort_direction.toUpper() in ['ASC', 'DESC']
+    sort_by_is_correct = sort_by in RestaurantListElement._meta.get_all_field_names()
+    if sort_by_is_correct and sort_direction_is_correct:
+        restaurant_list = restaurant_list_for_user(user)
+        restaurant_list.sort_by = sort_by.toUpper()
+        restaurant_list.sort_direction = sort_direction
+        restaurant_list.save()
+
+    return display_restaurant_list_for_user(request, user)
+
+
 def display_restaurant_list_for_current_user(request):
     return display_restaurant_list_for_user(request, request.user)
+
 
 @login_required
 def show_restaurant_search(request, restaurant_list_element_id):
@@ -108,6 +132,7 @@ def show_restaurant_search(request, restaurant_list_element_id):
             'restaurant_list_element': restaurant_list_element,
         }
     )
+
 
 @login_required
 @json_view
@@ -158,6 +183,7 @@ def add_restaurant_to_list(request):
     # TODO (zak): Throw exception that is handled by JSON
     return {'result': 'error'}
 
+
 @require_POST
 @login_required
 @json_view
@@ -166,6 +192,7 @@ def delete_restaurant_from_list(request):
     id = request.POST['id']
     RestaurantListElement.objects.get(pk=id).delete()
     return {'result': 'success'}
+
 
 @require_POST
 @login_required
