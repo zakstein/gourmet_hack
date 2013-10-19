@@ -1,26 +1,22 @@
-{% extends "base.html" %}
+{% extends "base_with_navbar.html" %}
 {% load i18n %}
 {% block header %}
-        {% block title %}Cookie Monster Project{% endblock %}
-            {% block styles %}<link rel="stylesheet" type ="text/css" href="/css/home.css">{% endblock %}
+        {% block title %}{% trans "Amuse Rouge" %}{% endblock %}
+            {% block styles %}
+                <link rel="stylesheet" type ="text/css" href="/css/home.css">
+                <link rel="stylesheet" type ="text/css" href="/css/navbar.css">
+            {% endblock %}
         {% endblock %}
         {% block body_id %}homepage{% endblock %}
         {% block class %}homepage-container{% endblock %}
+{% block signin %}
+    <li class="nav-item sign-in">
+        <a class="btn btn-inverse" href="/accounts/signin/">Sign in</a>
+    </li>
+{% endblock %}
 {% block content %}
     <div class="content">
         <div class="background-container">
-            <div class="nav-container">
-                <ul>
-                    <li class="nav-item logo" style="color:red">
-                        <img src="/img/logo.png" />
-                    </li>
-                    <li class="nav-item middle-div">
-                    </li>
-                    <li class="nav-item sign-in">
-                        <a class="btn btn-inverse" href="/accounts/signin/">Sign in</a>
-                    </li>
-                </ul>
-            </div>
             <div class="hero-container">
                 <div class ="sign-up">
                     <form action='/accounts/signup/' method="post">

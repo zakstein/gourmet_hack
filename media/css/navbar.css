@@ -1,0 +1,22 @@
+.nav-item{
+	width:32%;
+	border:2px solid #FFF;
+	text-align:center;
+}
+
+.nav-container{
+	background-color:#FFF;
+	width: 100%;
+	opacity: 0.90;
+	border-bottom:3px solid #000;
+}
+
+ul{
+	margin-top:0;
+	padding:0;
+	list-style:none;
+}
+li{
+	padding-top:10px;
+	display:inline-block;
+}

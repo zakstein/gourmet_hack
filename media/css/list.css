@@ -1,6 +1,7 @@
 .container-list {
 	max-width: 1170px;
 	margin: 0 auto;
+	background-color: #fff;
 }
 
 .btn-file {
@@ -19,4 +20,9 @@
 	direction: ltr;
 	cursor: pointer;
 }
+
+body {
+	background-color: #646464;
+}
+
 

@@ -5,12 +5,13 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>{% block title %}{% endblock %}</title>
   {% block meta %}{% endblock %}
-<link rel="stylesheet" type ="text/css" href="/css/bootstrap.css">
-<link rel="stylesheet" type ="text/css" href="/css/autocomplete.css">
+    <link rel="stylesheet" type ="text/css" href="/css/bootstrap.css">
+    <link rel="stylesheet" type ="text/css" href="/css/autocomplete.css">
+    {% block styles %}{% endblock %}
 </head>
-{% block styles %}{% endblock %}
 <body id="{% block body_id %}{% endblock %}" class="{% block body_class %}{% endblock %}">
     {% block body %}
+        {% block navbar %}{% endblock %}
         {% block content %}{% endblock %}
         {% block footer %}
             <div class="footer meta text-center">

@@ -1,16 +1,16 @@
-{% extends "base.html" %}
+{% extends "base_with_navbar.html" %}
 {% block header %}
     {% block title %}List{% endblock %}
-    {% block styles %}<link rel="stylesheet" type ="text/css" href="/css/list.css">{% endblock %}
+    {% block styles %}
+        <link rel="stylesheet" type ="text/css" href="/css/list.css">
+        <link rel="stylesheet" type ="text/css" href="/css/navbar.css">
+    {% endblock %}
+{% endblock %}
+{% block signout %}
+    <a href="/accounts/signout/">Signout</a>
 {% endblock %}
 {% block content %}
     <div class="content container-list">
-        <div class="masthead">
-            <h3 class="muted">Gourmizzle</h3>
-            <ul class="nav nav-pills pull-right">
-                <li><a href="/accounts/signout/">Signout</a></li>
-            </ul>
-        </div>
         {% include "restaurant_list/list_upload.html" %}
         <div class="module" data-module="restaurant_list">
             {% include "restaurant_list/list.html" %}

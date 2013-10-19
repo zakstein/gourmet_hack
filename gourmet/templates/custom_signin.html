@@ -10,7 +10,7 @@
         <form class="form-signin" action="" method="post">
             {% csrf_token %}
             <fieldset>
-                <h3 class="form-signin-heading text-center"><p><img src="/img/logo.png" /> {% trans "SIGN IN" %}</p></h3>
+                <h3 class="form-signin-heading text-center"><img src="/img/logo.png" /></h3>
                 <span class="error">{{ form.non_field_errors }}</span>
                 {% for field in form %}
                     <span class = "error">{{ field.errors }}</span>

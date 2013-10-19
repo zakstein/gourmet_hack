@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block navbar %}
+    <div class="nav-container">
+        <ul>
+            <li class="nav-item logo">
+                <img src="/img/logo.png" />
+            </li>
+            <li class="nav-item middle-div">
+            </li>
+            {% block signin %}
+            {% endblock %}
+            {% block signout %}
+            {% endblock %}
+        </ul>
+    </div>
+{% endblock %}
