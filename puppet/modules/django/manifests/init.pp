@@ -30,11 +30,19 @@ class django {
 		require => Package['python-django'],
 	}
 
-        exec { "pip install django-userena":
-                cwd => '/',
-                path => $path,
-                user => 'root',
-                group => 'root',
-                require => [Package['python-pip'], Package['python-django'],
-        }
+	exec { "pip install django-userena":
+		cwd => '/',
+			path => $path,
+			user => 'root',
+			group => 'root',
+			require => [Package['python-pip'], Package['python-django']],
+	}
+
+	exec { "pip install django-denorm":
+		cwd => '/',
+			path => $path,
+			user => 'root',
+			group => 'root',
+			require => [Package['python-pip'], Package['python-django']],
+	}
 }

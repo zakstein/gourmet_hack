@@ -1,37 +1,41 @@
-<table class="table table-hover">
-<thead>
-    <tr>
-        <th><strong>Restaurant</strong></th>
-        <th><strong>Eaten</strong></th>
-        <th><strong>Rating</strong></th>
-        <th><strong>Notes</strong></th>
-        <th><strong>Address</strong></th>
-    </tr>
-</thead>
-<tbody>
-{% for restaurant_element in restaurant_list %}
-    <tr id="{{ restaurant_element.id }}">
-        <td class="restaurant_name">
-        {% if not restaurant_element.restaurant.name %}
-            We didn't understand: {{ restaurant_element.raw_upload_info.name }}
-        {% else %}
-            <a href="{{ restaurant_element.restaurant.url }}" target="_blank">{{ restaurant_element.restaurant.name }}</a>
-        {%  endif %}
-        </td>
-        <td class="has_been{% if restaurant_element.has_been %} been{% endif %}">
-            {% if restaurant_element.has_been %}
-                <i class="icon-ok"></i>
-            {%  else %}
-                <i class="icon-minus"></i>
+{% load i18n %}
+{% if can_edit_rows %}
+    <ul class="sort-menu inline">
+        {% for sort_by in sort_by_options %}
+            {% if sort_by_for_list == sort_by %}
+                <li class="label current-sort" data-sort_by="{{ sort_by }}" data-sort_direction="{{ sort_direction_for_list }}">
+                    {{ sort_by }} {% if sort_direction_for_list == 'asc' %}&and;{% else %}&or;{% endif %}
+                </li>
+            {% else %}
+                <li data-sort_by="{{ sort_by }}">{{ sort_by }}</li>
             {% endif %}
-        </td>
-        <td class="rating">{% if restaurant_element.rating != -1 %}{{ restaurant_element.rating }}{% else %}N/A{% endif %}</td>
-        <td class="notes">{{ restaurant_element.notes }} </td>
-        <td>{{ restaurant_element.restaurant.full_address }}</td>
-        {% if can_edit_rows %}
-            <td><a href="#" class="edit_restaurant">edit</a> | <a href="#" class="delete_restaurant">delete</a></td>
-        {% endif %}
-    </tr>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% for restaurant_element in restaurant_list %}
+    <div id="{{ restaurant_element.id }}" {% if restaurant_element.has_been %}class="has_been"{% endif %}>
+        <ul class="inline">
+            <li class="rating">
+                <h2>
+                    {% if restaurant_element.rating != -1 %}{{ restaurant_element.rating }}{% else %}–{% endif %}
+                </h2>
+            </li>
+            <li><h1>|</h1></li>
+            <li class="restaurant_info">
+                <strong>
+                    {% if not restaurant_element.restaurant.name %}
+                        We didn't understand: {{ restaurant_element.raw_upload_info.name }}
+                    {% else %}
+                        <a href="{{ restaurant_element.restaurant.url }}" target="_blank">{{ restaurant_element.restaurant.name }}</a>
+                    {%  endif %}
+                </strong>
+                &middot;
+                <span class="muted">{{ restaurant_element.restaurant.neighborhood }}</span>
+                <div class="notes">{{ restaurant_element.notes }} </div>
+            </li>
+            {% if can_edit_rows %}
+                <li><a href="#" class="edit_restaurant">edit</a> | <a href="#" class="delete_restaurant">delete</a></li>
+            {% endif %}
+        </ul>
+    </div>
 {% endfor %}
-</tbody>
-</table>

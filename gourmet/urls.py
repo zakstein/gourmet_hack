@@ -22,6 +22,8 @@ urlpatterns = patterns('',
     url(r'^restaurant_list/$', 'restaurant_list.views.display_restaurant_list_for_current_user'),
     url(r'^restaurant_list/(?P<user_to_display>\d+)$', 'restaurant_list.views.display_restaurant_list_for_user'),
 
+    url(r'^update_list_sort/$', 'restaurant_list.views.update_restaurant_list_sorting_for_user_and_return_updated_list'),
+
     # url(r'^show_restaurant_search/$', 'restaurant_list.views.show_restaurant_search'),
     # url(r'^show_restaurant_search/(?P<restaurant_list_element_id>\d+)$', 'restaurant_list.views.show_restaurant_search'),
 

@@ -2,11 +2,16 @@ Application.addModule('restaurant_list', function(context) {
 	'use strict';
 
 	var ajaxService = context.getService('ajax'),
-		deleteElementURL = '/delete/';
+		deleteElementURL = '/delete/',
+		updateSortURL = '/update_list_sort/';
+
+	function updateHtml(html) {
+		context.getElement().html(html);
+	}
 
 	function reloadList() {
 		ajaxService.getHtmlFromServer('/restaurant_list/', {}, function(html) {
-			context.getElement().find('table').replaceWith(html);
+			updateHtml(html)
 		});
 	}
 
@@ -16,9 +21,9 @@ Application.addModule('restaurant_list', function(context) {
 		});
 	}
 
-	function extractDataFromTableRow($tableRowElement) {
+	function extractInfoFromListRow($listRowElement) {
 		var data = {};
-		$tableRowElement.find('td').each(function(index, element) {
+		$listRowElement.find('li').each(function(index, element) {
 			var $element = $(element);
 			if (element.className) {
 				if ($element.hasClass('has_been')) {
@@ -29,14 +34,31 @@ Application.addModule('restaurant_list', function(context) {
 			}
 		});
 
-		data['restaurant_list_element_id'] = $tableRowElement[0].id;
+		data['restaurant_list_element_id'] = $listRowElement[0].id;
 
 		return data;
 	}
 
 	function editListElement(listDomElement) {
-		var data = extractDataFromTableRow(listDomElement);
+		var data = extractInfoFromListRow(listDomElement);
 		context.broadcast('edit_restaurant', data);
+	}
+
+	function sortList(listSortElement) {
+		var new_sort_by,
+			new_sort_direction = 'asc';
+
+		new_sort_by = listSortElement.data('sort_by');
+
+		if (listSortElement.hasClass('current-sort')) {
+			if (listSortElement.data('sort_direction') == 'asc') {
+				new_sort_direction = 'desc';
+			}
+		}
+
+		ajaxService.postToServerReturnHtml(updateSortURL, {sort_by: new_sort_by, sort_direction: new_sort_direction}, function(html) {
+			updateHtml(html);
+		});
 	}
 
 	return {
@@ -50,9 +72,11 @@ Application.addModule('restaurant_list', function(context) {
 		onclick: function(e) {
 			var $target = $(e.target);
 			if ($target.hasClass('delete_restaurant')) {
-				deleteListElement($target.closest('tr'));
+				deleteListElement($target.closest('div'));
 			} else if ($target.hasClass('edit_restaurant')) {
-				editListElement($target.closest('tr'));
+				editListElement($target.closest('div'));
+			} else if ($target.parent().andSelf().hasClass('sort-menu')) {
+				sortList($target);
 			}
 		}
 	};

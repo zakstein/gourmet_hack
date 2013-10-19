@@ -5,7 +5,12 @@ import lib.spreadsheet
 from django.contrib.auth import models as auth_models
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
+from denorm import denormalized
 
+SORT_BY_NAME = 'restaurant_name'
+SORT_BY_RATING = 'rating'
+SORT_DIRECTION_ASC = 'ASC'
+SORT_DIRECTION_DESC = 'DESC'
 
 class Restaurant(models.Model):
     name = models.CharField(max_length=255, db_index=True)
@@ -37,6 +42,13 @@ class RestaurantList(models.Model):
         spreadsheet = lib.spreadsheet.Spreadsheet(self, file_book, required_headers)
         return spreadsheet.parse(RestaurantListElement)
 
+
+def sort_by_options_for_restaurant_list():
+    return [SORT_BY_NAME, SORT_BY_RATING]
+
+
+def sort_direction_options_for_restaurant_list():
+    return [SORT_DIRECTION_ASC, SORT_DIRECTION_DESC]
 
 def restaurant_list_for_user(user):
     """
@@ -97,6 +109,10 @@ class RestaurantListElement(models.Model):
     notes = models.TextField(default='')
     # This field contains all info that is uploaded for later use
     raw_upload_info = models.TextField(default='')
+
+    @denormalized(models.CharField, max_length=256)
+    def restaurant_name(self):
+        return self.restaurant.name
 
     def set_all_fields_from_restaurant_and_element_info(self, list_element_fields, restaurant, unclassified_info):
         """

@@ -8,6 +8,7 @@ from django.shortcuts import render
 from django.forms import ValidationError
 from forms import UploadRestaurantFileForm, AddRestaurantForm, EditRestaurantForm
 from models import restaurant_list_for_user, RestaurantListElement, fetch_restaurant_from_database_or_api
+from models import sort_by_options_for_restaurant_list, sort_direction_options_for_restaurant_list
 from decorators import json_view, authorization_required
 from lib.authorization_check import Authorization_Check, DELETE_ACTION, VIEW_ACTION, EDIT_ACTION
 from restaurant_list.lib.yelp_api import Yelp_API
@@ -42,7 +43,7 @@ def upload_restaurant_list_from_file(request):
 
 def _get_restaurant_list_elements_for_user(user):
     restaurant_list = restaurant_list_for_user(user)
-    order_direction_sign = '+' if restaurant_list.sort_direction == 'ASC' else '-'
+    order_direction_sign = '-' if restaurant_list.sort_direction == 'DESC' else ''
 
     restaurant_elements = restaurant_list.restaurantlistelement_set.all().order_by(
         order_direction_sign + restaurant_list.sort_by
@@ -54,11 +55,15 @@ def _get_restaurant_list_elements_for_user(user):
 
 
 def _render_restaurant_list_response_with_template(request, template_name, restaurant_elements, user_to_display):
+    restaurant_list = restaurant_list_for_user(user_to_display)
     return render_to_response(
         request,
         template_name,
         {
             'modals_to_include': ['edit', 'add'],
+            'sort_by_options': sort_by_options_for_restaurant_list(),
+            'sort_by_for_list': restaurant_list.sort_by,
+            'sort_direction_for_list': restaurant_list.sort_direction.lower(),
             'restaurant_list': restaurant_elements,
             'can_edit_rows': Authorization_Check(EDIT_ACTION).is_authorized(request.user, user_to_display),
         },
@@ -103,14 +108,18 @@ def display_restaurant_list_for_user(request, user_to_display):
     )
 
 
+@require_POST
 @login_required
-def update_restaurant_list_sorting_for_user_and_return_updated_list(request, user, sort_by, sort_direction):
-    sort_direction_is_correct = sort_direction.toUpper() in ['ASC', 'DESC']
-    sort_by_is_correct = sort_by in RestaurantListElement._meta.get_all_field_names()
+def update_restaurant_list_sorting_for_user_and_return_updated_list(request):
+    user = request.user
+    sort_by = request.POST['sort_by']
+    sort_direction = request.POST['sort_direction']
+    sort_direction_is_correct = sort_direction.upper() in sort_direction_options_for_restaurant_list()
+    sort_by_is_correct = sort_by in sort_by_options_for_restaurant_list()
     if sort_by_is_correct and sort_direction_is_correct:
         restaurant_list = restaurant_list_for_user(user)
-        restaurant_list.sort_by = sort_by.toUpper()
-        restaurant_list.sort_direction = sort_direction
+        restaurant_list.sort_by = sort_by
+        restaurant_list.sort_direction = sort_direction.upper()
         restaurant_list.save()
 
     return display_restaurant_list_for_user(request, user)

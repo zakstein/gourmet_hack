@@ -12,7 +12,7 @@
 {% block content %}
     <div class="content container-list">
         {% include "restaurant_list/list_upload.html" %}
-        <div class="module" data-module="restaurant_list">
+        <div class="module restaurant_list" data-module="restaurant_list">
             {% include "restaurant_list/list.html" %}
         </div>
         {% if can_edit_rows %}
