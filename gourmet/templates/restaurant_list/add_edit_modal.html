@@ -2,7 +2,7 @@
     <div id="{{ modal_type }}-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="{{ modal_type }}Modal">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3>{{ modal_type|capfirst }} restaurant</h3>
+            <h3 class="modal-title">{{ modal_type|capfirst }} restaurant</h3>
         </div>
         <form class="form module" data-module="{{ modal_type }}_restaurant" method="POST" action="/{{ modal_type }}/">
             <div class="modal-body">
@@ -21,6 +21,7 @@
                     <input name="rating" type="text" class="input-mini" placeholder="Rating (1-100)" />
                 </div>
                 <textarea name="notes" placeholder="Notes" rows="4"></textarea>
+                <input type="text" class="tag-edit" name="tags" value="" />
             </div>
             <div class="modal-footer">
                 <input type="submit" class="btn btn-inverse" value="{{ modal_type|capfirst }} Restaurant" />

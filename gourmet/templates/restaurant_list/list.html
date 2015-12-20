@@ -26,12 +26,18 @@
                     {% if not restaurant_element.restaurant.name %}
                         We didn't understand: {{ restaurant_element.raw_upload_info.name }}
                     {% else %}
-                        <a href="{{ restaurant_element.restaurant.url }}" target="_blank">{{ restaurant_element.restaurant.name }}</a>
+                        <a href="{{ restaurant_element.restaurant.url }}" target="_blank" class="restaurant-name">{{ restaurant_element.restaurant.name }}</a>
                     {%  endif %}
                 </strong>
                 &middot;
                 <span class="muted">{{ restaurant_element.restaurant.neighborhood }}</span>
                 <div class="notes">{{ restaurant_element.notes }} </div>
+                <ul class="inline tags">
+                    {% for tag in restaurant_element.tags %}
+                        <li class="label tag-name" data-tag-id="{{ tag.id }}">{{ tag.name }}</li>
+                    {% endfor %}
+                    <li><a href="#" class="edit-tags">{% trans "Add tags" %}</a></li>
+                </ul>
             </li>
             {% if can_edit_rows %}
                 <li><a href="#" class="edit_restaurant">edit</a> | <a href="#" class="delete_restaurant">delete</a></li>

@@ -6,6 +6,7 @@ from django.contrib.auth import models as auth_models
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms.models import model_to_dict
 from denorm import denormalized
+from taggit.managers import TaggableManager
 
 SORT_BY_NAME = 'restaurant_name'
 SORT_BY_RATING = 'rating'
@@ -109,6 +110,8 @@ class RestaurantListElement(models.Model):
     notes = models.TextField(default='')
     # This field contains all info that is uploaded for later use
     raw_upload_info = models.TextField(default='')
+
+    tags = TaggableManager()
 
     @denormalized(models.CharField, max_length=256)
     def restaurant_name(self):

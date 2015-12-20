@@ -12,8 +12,8 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'gourmet',                      # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'gourmet',
         'USER': 'vagrant',                      # Not used with sqlite3.
         'PASSWORD': '3atingmakesyouf4t',                  # Not used with sqlite3.
         'HOST': 'localhost',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -127,6 +127,7 @@ INSTALLED_APPS = (
     'guardian',
     'easy_thumbnails',
     'south',
+    'taggit',
     # Uncomment the next line to enable admin documentation:
     'django.contrib.admindocs',
     'restaurant_list',

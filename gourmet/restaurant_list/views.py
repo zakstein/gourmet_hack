@@ -6,12 +6,14 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.forms import ValidationError
+from django.db.models import Q
 from forms import UploadRestaurantFileForm, AddRestaurantForm, EditRestaurantForm
 from models import restaurant_list_for_user, RestaurantListElement, fetch_restaurant_from_database_or_api
 from models import sort_by_options_for_restaurant_list, sort_direction_options_for_restaurant_list
 from decorators import json_view, authorization_required
 from lib.authorization_check import Authorization_Check, DELETE_ACTION, VIEW_ACTION, EDIT_ACTION
 from restaurant_list.lib.yelp_api import Yelp_API
+from taggit.models import Tag
 
 
 def display_home_page(request):
@@ -50,6 +52,7 @@ def _get_restaurant_list_elements_for_user(user):
     )
     for restaurant_element in restaurant_elements:
         restaurant_element.raw_upload_info = json.loads(restaurant_element.raw_upload_info)
+        restaurant_element.tags = [{'id': tag.name, 'name': tag.name} for tag in restaurant_element.tags.all()]
 
     return restaurant_elements
 
@@ -155,7 +158,7 @@ def restaurant_search(request):
     return api_result.format_matches_for_display()
 
 
-def _get_non_restaurant_list_element_fields_from_form(form_data):
+def _get_restaurant_list_element_fields_from_form(form_data):
     list_element_fields = {
         'has_been': form_data['has_been'],
     }
@@ -178,7 +181,7 @@ def add_restaurant_to_list(request):
         restaurant_info = yelp_api.fetch_restaurant_info(form_data['restaurant_id'])
         restaurant = fetch_restaurant_from_database_or_api(restaurant_info)
 
-        list_element_fields = _get_non_restaurant_list_element_fields_from_form(form_data)
+        list_element_fields = _get_restaurant_list_element_fields_from_form(form_data)
 
         list_element_fields['restaurant'] = restaurant
 
@@ -209,16 +212,41 @@ def delete_restaurant_from_list(request):
 @authorization_required(EDIT_ACTION)
 def edit_restaurant_list_element(request):
     form = EditRestaurantForm(request.POST)
+    print "HASDLAKSJDLAKSDJLAKSDJ"
+    print form.is_valid()
     if form.is_valid():
         form_data = form.cleaned_data
         list_element = RestaurantListElement.objects.get(pk=form_data['restaurant_list_element_id'])
 
-        list_element_fields = _get_non_restaurant_list_element_fields_from_form(form_data)
+        list_element_fields = _get_restaurant_list_element_fields_from_form(form_data)
 
         list_element.set_all_fields_from_restaurant_and_element_info(list_element_fields, None, {})
+
+        if 'tags' in form_data:
+            list_element.tags.set(form_data['tags'])
 
         return {'result': 'success'}
 
     # TODO (zak): Throw exception that is handled by JSON
     return {'result': 'error'}
 
+
+@require_POST
+@login_required
+@authorization_required(EDIT_ACTION)
+def set_tags_for_restaurant_list_element(request):
+    tags = request.POST['tags']
+    restaurant_list_element = RestaurantListElement.objects.get(pk=request.POST['restaurant_list_element_id'])
+
+    restaurant_list_element.tags.set(tags)
+
+
+@login_required
+@json_view
+def get_filtered_tags_for_current_user(request, filter_term=''):
+    user = request.user
+    if filter_term:
+        tags = Tag.objects.filter(Q(name__startswith=filter_term), restaurantlistelement__restaurantList__owner=user).distinct()
+    else:
+        tags = Tag.objects.filter(restaurantelement__owner=user).distinct()
+    return [{'id': tag.name, 'name': tag.name} for tag in tags]

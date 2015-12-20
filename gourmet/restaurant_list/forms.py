@@ -10,6 +10,7 @@ class BaseRestaurantForm(forms.Form):
     has_been = forms.BooleanField(required=False)
     rating = forms.IntegerField(required=False, min_value=0, max_value=100)
     notes = forms.CharField(required=False)
+    tags = forms.CharField(required=False)
 
     def clean(self):
         cleaned_data = self.cleaned_data

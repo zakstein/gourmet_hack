@@ -22,19 +22,24 @@ Application.addModule('restaurant_list', function(context) {
 	}
 
 	function extractInfoFromListRow($listRowElement) {
-		var data = {};
+		var data = {formData: {}};
 		$listRowElement.find('li').each(function(index, element) {
 			var $element = $(element);
 			if (element.className) {
-				if ($element.hasClass('has_been')) {
-					data['has_been'] = $element.hasClass('been') ? true : false;
-				} else {
-					data[element.className] = $.trim($element.text());
-				}
+				data['formData'][element.className] = $.trim($element.text());
 			}
 		});
 
-		data['restaurant_list_element_id'] = $listRowElement[0].id;
+		data['formData']['restaurant_name'] = $listRowElement.find('.restaurant-name').text();
+		data['formData']['has_been'] = $listRowElement.hasClass('.has_been');
+		data['formData']['restaurant_list_element_id'] = $listRowElement[0].id;
+
+		data['tags'] = {};
+
+		$listRowElement.find('.tag-name').each(function (idx) {
+			var $tag = $(this);
+			data['tags'][$tag.data('tag-id')] = $tag.text();
+		});
 
 		return data;
 	}

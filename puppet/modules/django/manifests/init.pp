@@ -45,4 +45,12 @@ class django {
 			group => 'root',
 			require => [Package['python-pip'], Package['python-django']],
 	}
+
+	exec { "pip install django-taggit":
+		cwd => '/',
+			path => $path,
+			user => 'root',
+			group => 'root',
+			require => [Package['python-pip'], Package['python-django']],
+	}
 }
